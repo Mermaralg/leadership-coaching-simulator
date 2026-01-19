@@ -17,18 +17,15 @@ export function analyzeStrengths(scores: Record<SubDimension, number>): Strength
     );
 
     if (strengthData && strengthData.strengths.length > 0) {
-      // Add strength items (take first 2-3 strengths)
-      const selectedStrengths = strengthData.strengths.slice(0, 3);
-      selectedStrengths.forEach((strengthDesc) => {
-        const item = {
-          dimension: subDim,
-          score,
-          description: strengthDesc,
-          category: scoreRange,
-        };
-        console.log(`[analyzeStrengths] Adding strength:`, item);
-        strengths.push(item);
-      });
+      // Add ONE strength item per dimension (take first strength description)
+      const item = {
+        dimension: subDim,
+        score,
+        description: strengthData.strengths[0],
+        category: scoreRange,
+      };
+      console.log(`[analyzeStrengths] Adding strength:`, item);
+      strengths.push(item);
     }
   });
 
