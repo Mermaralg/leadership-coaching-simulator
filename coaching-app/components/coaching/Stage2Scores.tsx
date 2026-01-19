@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCoaching } from '@/lib/context/CoachingContext';
 import { DIMENSIONS, SubDimension } from '@/types/coaching';
 
@@ -11,13 +11,17 @@ export default function Stage2Scores() {
     d.subDimensions.map((sub) => ({ ...sub, mainDim: d.name }))
   );
 
-  // Initialize all scores to 50 by default
-  const initialScores: Record<SubDimension, number> = {} as Record<SubDimension, number>;
-  allDimensions.forEach((dim) => {
-    initialScores[dim.key] = 50;
-  });
+  const [scores, setScores] = useState<Partial<Record<SubDimension, number>>>({});
 
-  const [scores, setScores] = useState<Partial<Record<SubDimension, number>>>(initialScores);
+  // Initialize all scores to 50 on mount
+  useEffect(() => {
+    const initialScores: Record<SubDimension, number> = {} as Record<SubDimension, number>;
+    allDimensions.forEach((dim) => {
+      initialScores[dim.key] = 50;
+    });
+    setScores(initialScores);
+    console.log('Stage2 - Initialized scores:', initialScores);
+  }, []); // Empty dependency array = run once on mount
 
   const handleScoreChange = (dimension: SubDimension, value: number) => {
     setScores((prev) => ({ ...prev, [dimension]: value }));
@@ -27,9 +31,17 @@ export default function Stage2Scores() {
     // Check if all scores are filled
     const allFilled = allDimensions.every((dim) => scores[dim.key] !== undefined);
     
+    console.log('Stage2 Submit - allFilled:', allFilled);
+    console.log('Stage2 Submit - scores:', scores);
+    console.log('Stage2 Submit - scores count:', Object.keys(scores).length);
+    
     if (allFilled) {
+      console.log('Calling updateScores with:', scores);
       updateScores(scores as Record<SubDimension, number>);
+      console.log('Moving to next stage');
       nextStage();
+    } else {
+      console.error('Not all scores filled!');
     }
   };
 
