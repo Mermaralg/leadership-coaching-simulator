@@ -9,10 +9,8 @@ export default function Stage1Welcome() {
 
   const handleStart = () => {
     if (name.trim()) {
-      if (!session) {
-        startSession(name);
-      }
-      nextStage();
+      startSession(name);
+      // Session starts at stage 2, so user goes directly to scoring
     }
   };
 
