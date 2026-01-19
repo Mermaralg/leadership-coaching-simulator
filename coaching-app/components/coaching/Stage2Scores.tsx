@@ -37,9 +37,9 @@ export default function Stage2Scores() {
     
     if (allFilled) {
       console.log('Calling updateScores with:', scores);
-      updateScores(scores as Record<SubDimension, number>);
-      console.log('Moving to next stage');
-      nextStage();
+      // Pass true to move to next stage atomically, avoiding race condition
+      updateScores(scores as Record<SubDimension, number>, true);
+      console.log('updateScores called with moveToNextStage=true');
     } else {
       console.error('Not all scores filled!');
     }
