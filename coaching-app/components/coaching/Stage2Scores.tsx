@@ -6,11 +6,18 @@ import { DIMENSIONS, SubDimension } from '@/types/coaching';
 
 export default function Stage2Scores() {
   const { updateScores, nextStage, previousStage } = useCoaching();
-  const [scores, setScores] = useState<Partial<Record<SubDimension, number>>>({});
-
+  
   const allDimensions = Object.values(DIMENSIONS).flatMap((d) =>
     d.subDimensions.map((sub) => ({ ...sub, mainDim: d.name }))
   );
+
+  // Initialize all scores to 50 by default
+  const initialScores: Record<SubDimension, number> = {} as Record<SubDimension, number>;
+  allDimensions.forEach((dim) => {
+    initialScores[dim.key] = 50;
+  });
+
+  const [scores, setScores] = useState<Partial<Record<SubDimension, number>>>(initialScores);
 
   const handleScoreChange = (dimension: SubDimension, value: number) => {
     setScores((prev) => ({ ...prev, [dimension]: value }));
