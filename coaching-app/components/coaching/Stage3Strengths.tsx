@@ -11,7 +11,16 @@ export default function Stage3Strengths() {
     // Debug logging
     console.log('Stage 3 - Session:', session);
     console.log('Stage 3 - Strengths:', session?.strengths);
+    if (session?.strengths) {
+      console.log('Stage 3 - Strength scores detail:');
+      session.strengths.forEach((s, idx) => {
+        console.log(`  [${idx}] ${s.dimension}: score=${s.score}, category=${s.category}`);
+      });
+    }
     console.log('Stage 3 - Profile:', session?.profile);
+    if (session?.profile?.scores) {
+      console.log('Stage 3 - Profile scores:', session.profile.scores);
+    }
   }, [session]);
 
   if (!session) {
