@@ -2,14 +2,26 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Message } from '@/lib/services/aiCoach';
+import { ScoreProposal } from '@/lib/scoring/scoreInference';
+import { ScoreValidation } from './ScoreValidation';
 
 interface ChatInterfaceProps {
   onSendMessage: (message: string) => void;
   messages: Message[];
   isLoading?: boolean;
+  pendingProposal?: ScoreProposal | null;
+  onValidateScore?: (adjustedScore?: number) => void;
+  onRejectScore?: () => void;
 }
 
-export default function ChatInterface({ onSendMessage, messages, isLoading }: ChatInterfaceProps) {
+export default function ChatInterface({ 
+  onSendMessage, 
+  messages, 
+  isLoading,
+  pendingProposal,
+  onValidateScore,
+  onRejectScore,
+}: ChatInterfaceProps) {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -75,6 +87,19 @@ export default function ChatInterface({ onSendMessage, messages, isLoading }: Ch
             </div>
           </div>
         )}
+
+        {/* Score validation UI */}
+        {pendingProposal && onValidateScore && onRejectScore && (
+          <div className="flex justify-start">
+            <div className="max-w-[80%]">
+              <ScoreValidation
+                proposal={pendingProposal}
+                onValidate={onValidateScore}
+                onReject={onRejectScore}
+              />
+            </div>
+          </div>
+        )}
         
         <div ref={messagesEndRef} />
       </div>
@@ -98,7 +123,7 @@ export default function ChatInterface({ onSendMessage, messages, isLoading }: Ch
           />
           <button
             type="submit"
-            disabled={!input.trim() || isLoading}
+            disabled={!input.trim() || isLoading || !!pendingProposal}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
             Gönder

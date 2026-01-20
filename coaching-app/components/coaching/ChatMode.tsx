@@ -3,14 +3,21 @@
 import { useState } from 'react';
 import ChatInterface from './ChatInterface';
 import { CoachingState, Message } from '@/lib/services/aiCoach';
+import { ScoreValidation } from './ScoreValidation';
+import { ScoreSummary } from './ScoreSummary';
+import { useCoaching } from '@/lib/context/CoachingContext';
+import { ScoreProposal } from '@/lib/scoring/scoreInference';
+import { SubDimension } from '@/types/coaching';
 
 export default function ChatMode() {
+  const { dimensionScores, updateDimensionScore, validateDimensionScore } = useCoaching();
   const [state, setState] = useState<CoachingState>({
     stage: 1,
     conversationHistory: [],
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingProposal, setPendingProposal] = useState<ScoreProposal | null>(null);
 
   // Initialize with welcome message
   const [messages, setMessages] = useState<Message[]>([
@@ -53,6 +60,11 @@ export default function ChatMode() {
         ...newMessages,
         { role: 'assistant', content: data.response },
       ]);
+
+      // Check if there's a score proposal
+      if (data.scoreProposal) {
+        setPendingProposal(data.scoreProposal);
+      }
     } catch (err) {
       console.error('Error sending message:', err);
       setError('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
@@ -66,6 +78,47 @@ export default function ChatMode() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleValidateScore = (adjustedScore?: number) => {
+    if (!pendingProposal) return;
+
+    const finalScore = adjustedScore ?? pendingProposal.proposedScore;
+    updateDimensionScore(pendingProposal.dimension, finalScore, pendingProposal);
+    validateDimensionScore(pendingProposal.dimension);
+    setPendingProposal(null);
+
+    // Add confirmation message
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: 'assistant',
+        content: `Harika! ${pendingProposal.dimension} için ${finalScore} puanını kaydettim. Bir sonraki özelliğe geçelim. 🎯`,
+      },
+    ]);
+  };
+
+  const handleRejectScore = () => {
+    setPendingProposal(null);
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: 'assistant',
+        content: 'Tamam, bu konuda daha fazla konuşalım. Bana biraz daha detay verebilir misin?',
+      },
+    ]);
+  };
+
+  // Convert dimensionScores to PersonalityProfile format when Stage 2 completes
+  const convertScoresToProfile = () => {
+    if (Object.keys(dimensionScores).length < 15) return null;
+
+    const scores: Record<SubDimension, number> = {} as Record<SubDimension, number>;
+    Object.entries(dimensionScores).forEach(([key, value]) => {
+      scores[key as SubDimension] = value.score;
+    });
+
+    return scores;
   };
 
   return (
@@ -91,8 +144,26 @@ export default function ChatMode() {
           messages={messages}
           onSendMessage={handleSendMessage}
           isLoading={isLoading}
+          pendingProposal={pendingProposal}
+          onValidateScore={handleValidateScore}
+          onRejectScore={handleRejectScore}
         />
       </div>
+
+      {/* Show score summary in Stage 6 */}
+      {state.stage === 6 && Object.keys(dimensionScores).length > 0 && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] overflow-y-auto p-6">
+            <ScoreSummary scores={dimensionScores} />
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-6 w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Yeni Bir Simülasyon Başlat
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Error message */}
       {error && (
