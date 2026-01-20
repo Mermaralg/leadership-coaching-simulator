@@ -12,10 +12,15 @@ import ChatMode from '@/components/coaching/ChatMode';
 
 export default function Home() {
   const { session } = useCoaching();
-  const [mode, setMode] = useState<'slider' | 'chat'>('slider');
+  const [mode, setMode] = useState<'slider' | 'chat' | null>(null);
 
-  // Show mode selection if no session started
-  if (!session) {
+  // If chat mode is selected (even without session), show chat interface
+  if (mode === 'chat') {
+    return <ChatMode />;
+  }
+
+  // Show mode selection if no mode selected yet
+  if (mode === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl w-full mx-4">
@@ -58,12 +63,12 @@ export default function Home() {
     );
   }
 
-  // If chat mode is selected, show chat interface
-  if (mode === 'chat') {
-    return <ChatMode />;
+  // Slider mode selected - show welcome or current stage
+  if (!session) {
+    return <Stage1Welcome />;
   }
 
-  // Otherwise show slider mode
+  // Show slider mode with session
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
