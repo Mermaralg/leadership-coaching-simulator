@@ -251,7 +251,7 @@ GENEL KURALLAR:
         return !!state.participantName;
       case 2:
         // All 15 dimensions have scores
-        return state.scores && Object.keys(state.scores).length === 15;
+        return !!(state.scores && Object.keys(state.scores).length === 15);
       case 3:
       case 4:
       case 5:
