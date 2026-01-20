@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useCoaching } from '@/lib/context/CoachingContext';
 import Stage1Welcome from '@/components/coaching/Stage1Welcome';
 import Stage2Scores from '@/components/coaching/Stage2Scores';
@@ -7,14 +8,62 @@ import Stage3Strengths from '@/components/coaching/Stage3Strengths';
 import Stage4Development from '@/components/coaching/Stage4Development';
 import Stage5Actions from '@/components/coaching/Stage5Actions';
 import Stage6Summary from '@/components/coaching/Stage6Summary';
+import ChatMode from '@/components/coaching/ChatMode';
 
 export default function Home() {
   const { session } = useCoaching();
+  const [mode, setMode] = useState<'slider' | 'chat'>('slider');
 
+  // Show mode selection if no session started
   if (!session) {
-    return <Stage1Welcome />;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl w-full mx-4">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4 text-center">
+            5D Kişilik Koçluk Simülatörü
+          </h1>
+          <p className="text-gray-600 mb-8 text-center">
+            Başlamak için bir mod seçin:
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              onClick={() => setMode('chat')}
+              className="p-6 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-left"
+            >
+              <div className="text-2xl mb-2">💬</div>
+              <h3 className="font-bold text-lg mb-2">Sohbet Modu</h3>
+              <p className="text-sm text-gray-600">
+                Yapay zeka koçuyla doğal bir konuşma yapın. Daha kişisel ve etkileşimli bir deneyim.
+              </p>
+              <span className="inline-block mt-3 text-blue-600 font-medium">Yeni! ✨</span>
+            </button>
+            
+            <button
+              onClick={() => {
+                setMode('slider');
+                // Trigger the welcome stage to start session
+              }}
+              className="p-6 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left"
+            >
+              <div className="text-2xl mb-2">📊</div>
+              <h3 className="font-bold text-lg mb-2">Klasik Mod</h3>
+              <p className="text-sm text-gray-600">
+                Kaydırıcılarla puanlarınızı girin. Hızlı ve yapılandırılmış bir deneyim.
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
+  // If chat mode is selected, show chat interface
+  if (mode === 'chat') {
+    return <ChatMode />;
+  }
+
+  // Otherwise show slider mode
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
