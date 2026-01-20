@@ -10,11 +10,15 @@ import {
   DevelopmentItem,
 } from '@/types/coaching';
 import { analyzeStrengths, analyzeDevelopmentAreas } from '../utils/scoring';
+import { DimensionScores, ScoreProposal } from '../scoring/scoreInference';
 
 interface CoachingContextType {
   session: CoachingSession | null;
+  dimensionScores: DimensionScores;
   startSession: (name: string) => void;
   updateScores: (scores: Record<SubDimension, number>, moveToNextStage?: boolean) => void;
+  updateDimensionScore: (dimension: SubDimension, score: number, proposal?: ScoreProposal) => void;
+  validateDimensionScore: (dimension: SubDimension) => void;
   selectDevelopmentAreas: (areas: SubDimension[]) => void;
   nextStage: () => void;
   previousStage: () => void;
@@ -25,6 +29,7 @@ const CoachingContext = createContext<CoachingContextType | undefined>(undefined
 
 export function CoachingProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<CoachingSession | null>(null);
+  const [dimensionScores, setDimensionScores] = useState<DimensionScores>({});
 
   const startSession = (name: string) => {
     const newSession: CoachingSession = {
@@ -34,6 +39,7 @@ export function CoachingProvider({ children }: { children: ReactNode }) {
       startedAt: new Date(),
     };
     setSession(newSession);
+    setDimensionScores({}); // Reset scores for new session
   };
 
   const updateScores = (scores: Record<SubDimension, number>, moveToNextStage = false) => {
@@ -98,6 +104,34 @@ export function CoachingProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const updateDimensionScore = (
+    dimension: SubDimension,
+    score: number,
+    proposal?: ScoreProposal
+  ) => {
+    setDimensionScores((prev) => ({
+      ...prev,
+      [dimension]: {
+        score,
+        validated: false,
+        aiProposal: proposal,
+      },
+    }));
+  };
+
+  const validateDimensionScore = (dimension: SubDimension) => {
+    setDimensionScores((prev) => {
+      if (!prev[dimension]) return prev;
+      return {
+        ...prev,
+        [dimension]: {
+          ...prev[dimension],
+          validated: true,
+        },
+      };
+    });
+  };
+
   const completeSession = () => {
     if (!session) return;
     setSession({
@@ -110,8 +144,11 @@ export function CoachingProvider({ children }: { children: ReactNode }) {
     <CoachingContext.Provider
       value={{
         session,
+        dimensionScores,
         startSession,
         updateScores,
+        updateDimensionScore,
+        validateDimensionScore,
         selectDevelopmentAreas,
         nextStage,
         previousStage,
