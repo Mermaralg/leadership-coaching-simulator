@@ -67,8 +67,8 @@ export default function ChatInterface({
                 message.role === 'user'
                   ? 'bg-blue-600 text-white'
                   : message.role === 'assistant'
-                  ? 'bg-gray-100 text-gray-900'
-                  : 'bg-amber-50 text-amber-900 text-sm italic'
+                  ? 'bg-gray-200 text-gray-900'
+                  : 'bg-amber-100 text-amber-900 text-sm italic'
               }`}
             >
               <div className="whitespace-pre-wrap">{message.content}</div>
@@ -78,11 +78,11 @@ export default function ChatInterface({
         
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-lg px-4 py-3">
+            <div className="bg-gray-200 rounded-lg px-4 py-3">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
               </div>
             </div>
           </div>
