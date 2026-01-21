@@ -129,7 +129,7 @@ export default function ChatMode() {
           <h1 className="text-2xl font-bold text-gray-900">
             5D Kişilik Koçluk Simülatörü
           </h1>
-          <p className="text-sm text-gray-700 mt-1">
+          <p className="text-sm text-gray-900 font-medium mt-1">
             Aşama {state.stage} / 6
             {state.participantName && (
               <span className="ml-2">• Merhaba, {state.participantName}! 👋</span>
