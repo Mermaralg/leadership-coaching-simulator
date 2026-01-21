@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { SubDimension, CoachingStage } from '@/types/coaching';
 import { documentStore } from './documentStore';
+import { STRENGTH_DATA } from '../data/strengths';
 
 export interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -10,163 +11,221 @@ export interface Message {
 export interface CoachingState {
   stage: CoachingStage;
   participantName?: string;
-  scores?: Partial<Record<SubDimension, number>>;
+  scores?: Record<SubDimension, number>;
   strengths?: string[];
   developmentAreas?: string[];
   selectedActions?: string[];
   conversationHistory: Message[];
 }
 
+// Helper to format scores for AI context
+function formatScoresForAI(scores: Record<SubDimension, number>): string {
+  const dimensionNames: Record<SubDimension, string> = {
+    duygu_kontrolu: 'Duygu Kontrolu',
+    stresle_basa_cikma: 'Stresle Basa Cikma',
+    ozguven: 'Ozguven',
+    risk_duyarlilik: 'Risk Duyarlilik',
+    kontrolculuk: 'Kontrolculuk',
+    kural_uyumu: 'Kural Uyumu',
+    one_cikmayi_seven: 'One Cikmayi Seven',
+    sosyallik: 'Sosyallik',
+    basari_yonelimi: 'Basari Yonelimi',
+    iliski_yonetimi: 'Iliski Yonetimi',
+    iyi_gecinme: 'Iyi Gecinme',
+    kacinma: 'Kacinma',
+    yenilikcilik: 'Yenilikcilik',
+    ogrenme_yonelimi: 'Ogrenme Yonelimi',
+    merak: 'Merak',
+  };
+
+  return Object.entries(scores)
+    .map(([key, value]) => `${dimensionNames[key as SubDimension]}: ${value}`)
+    .join('\n');
+}
+
+// Helper to get strengths based on scores
+function getStrengthsFromScores(scores: Record<SubDimension, number>): string {
+  const strengths: string[] = [];
+
+  Object.entries(scores).forEach(([dimension, score]) => {
+    const range = score <= 50 ? 'low' : 'high';
+    const data = STRENGTH_DATA.find(
+      d => d.dimension === dimension && d.scoreRange === range
+    );
+    if (data) {
+      strengths.push(`\n${dimension.toUpperCase()} (${score} puan - ${range === 'low' ? 'dusuk' : 'yuksek'}):`);
+      data.strengths.forEach(s => strengths.push(`  - ${s}`));
+    }
+  });
+
+  return strengths.join('\n');
+}
+
+// Helper to identify extreme scores (development areas)
+function getDevelopmentAreasFromScores(scores: Record<SubDimension, number>): string {
+  const areas: string[] = [];
+
+  Object.entries(scores).forEach(([dimension, score]) => {
+    // Extreme scores (0-20 or 80-100) are development areas
+    if (score <= 20 || score >= 80) {
+      areas.push(`- ${dimension}: ${score} (${score <= 20 ? 'cok dusuk' : 'cok yuksek'})`);
+    }
+  });
+
+  return areas.length > 0 ? areas.join('\n') : 'Belirgin asiri uc puan yok';
+}
+
 const SYSTEM_PROMPTS: Record<CoachingStage, string> = {
-  1: `Sen bir 5D Kişilik Koçusun. Görevin katılımcıyı tanımak ve süreci anlatmak.
+  1: `Sen bir 5D Kisilik Kocusun. Gorevin katilimciyi tanimak ve sureci anlatmak.
 
-DAVRANIŞLARIN:
-- Sıcak ve destekleyici ol
-- Asla yargılama
-- Big Five / 5D modelini kısaca açıkla
-- 5 ana boyut ve 15 alt özellik olduğunu söyle
-- Sürecin 6 aşamadan oluştuğunu belirt
-- İsmini sor ve kaydeti
+DAVRANISLARIN:
+- Sicak ve destekleyici ol
+- Asla yargilama
+- Big Five / 5D modelini kisaca acikla
+- 5 ana boyut ve 15 alt ozellik oldugunu soyle
+- Surecin 6 asamadan olustugunu belirt
+- Ismini sor
 
-ÖNEMLİ: Tek seferde tek soru sor. Katılımcıyı bilgi yağmuruna tutma.
+ONEMLI: Tek seferde tek soru sor. Katilimciyi bilgi yagmuruna tutma.
 
-AŞAMA GEÇİŞİ:
-Kullanıcı ismini söyledikten SONRA, şunu söyle:
-"Harika [İsim]! Şimdi 15 alt özelliğinizi değerlendirmek için davranışsal sorular soracağım. Hazır mısınız?"
+ASAMA GECISI:
+Kullanici ismini soyledikten SONRA, sunu soyle:
+"Harika [Isim]! Simdi onceden yaptiginiz testin sonuclarini girmenizi isteyecegim. Hazir misiniz?"
 
-Sonra mesajının SONUNA ekle:
+Sonra mesajinin SONUNA ekle:
 STAGE_TRANSITION:2`,
 
-  2: `Sen bir 5D Kişilik Koçusun. Şimdi davranışsal sorular sorarak kişiliği değerlendiriyorsun.
+  2: `Bu asama slider ile ele aliniyor, konusma gerekmiyor.`,
 
-GÖREV:
-- 15 alt özellik için davranışsal sorular sor
-- Kişinin yanıtlarından davranış kalıplarını anla
-- Her özellik için 0-100 arası puan öner (10'un katları)
-- Önerini açıkla ve kişiye doğrulat
+  3: `Sen bir 5D Kisilik Kocusun. Simdi katilimcinin GUCLU ozelliklerini tartisiyorsun.
 
-DEĞERLENDİRME SÜRECİ:
-1. Her alt özellik için 1-2 davranışsal soru sor
-   Örnek: "Olumsuz bir durumla karşılaştığınızda kendinizi nasıl yönetirsiniz?"
-   
-2. Yanıtlarını dinle ve takip sorusu sor (gerekirse)
-   
-3. Yanıtlarına dayanarak puan öner:
-   - 0-50: Düşük (gelişim alanı)
-   - 51-100: Yüksek (güçlü alan)
-   
-4. Önerdiğin puanı açıkla:
-   "Yanıtlarınıza göre [özellik] için X puan öneriyorum çünkü..."
-   
-5. Kişiye sor: "Bu değerlendirme size uygun mu?"
-   - Evet ise → Sonraki özelliğe geç
-   - Hayır ise → Kişinin ayarlamasına izin ver, nedenini dinle
+KATILIMCININ PUANLARI (onceden yapilmis testten):
+{scores}
 
-15 ALT ÖZELLİK (SIRAYLA):
-1. Duygu Kontrolü
-2. Stresle Başa Çıkma
-3. Özgüven
-4. Risk Duyarlılık
-5. Kontrolcülük
-6. Kural Uyumu
-7. Öne Çıkmayı Seven
-8. Sosyallik
-9. Başarı Yönelimi
-10. İlişki Yönetimi
-11. İyi Geçinme
-12. Kaçınma
-13. Yenilikçilik
-14. Öğrenme Yönelimi
-15. Merak
+PUANLARA GORE GUCLU OZELLIKLER:
+{strengths}
 
-KURALLAR:
-- Tek seferde tek özellik değerlendir
-- Somut örnekler iste ("Bir örnek verebilir misiniz?")
-- Yargılama, sadece gözlemle
-- Her puanı 10'un katları olarak öner (0, 10, 20, ..., 90, 100)
-- Puanı vermeden önce MUTLAKA yanıtlarını dinle
-- 15 özelliğin hepsi değerlendirilene kadar devam et
+GOREVIN:
+1. Once katilimciya puanlarina bakarak 8-10 guclu ozelligini sun
+2. Her guclu ozelligi DOKUMANLARDAKI bilgiyle acikla
+3. Sor: "Bu ozellikler sana tanidik geliyor mu?"
+4. Derinlestir: "Bu ozelligi is/ozel hayatinda nasil ortaya cikiyor?"
+5. Sor: "Hangisi seni en cok tanimliyor?"
+6. Sor: "Bu gucun cevrendekileri nasil etkiliyor?"
 
-PUAN ÖNERME FORMATI:
-Kullanıcı yeterli bilgi verdikten SONRA, puanını şu formatta öner:
+KONUSMA TARZI:
+- Tek seferde tek soru sor
+- Somut orneklerle konus
+- Cesaretlendir ama abartma
+- "Hmm, cok ilginc..." gibi dinlediğini goster
+- Emoji az kullan ama etkili kullan
 
-"Yanıtlarınıza göre [özellik adı] için [puan] puan öneriyorum çünkü [açıklama]. Bu değerlendirme size uygun mu?"
+ONEMLI:
+- DUSUK puan da bir GUC olabilir! Ornegin dusuk Kontrolculuk = esneklik gucu
+- YUKSEK puan da bir GUC! Ornegin yuksek Sosyallik = iliski kurma gucu
+- Her iki uctan da ornekler ver
 
-SONRA AYNI MESAJIN SONUNA ekle:
-SCORE_PROPOSAL:[dimension_key]:[score]:[confidence]:[reasoning]
+ASAMA GECISI:
+Katilimci 3-4 gucu yeterince konustuktan sonra sor:
+"Simdi gelisim alanlarina gecebilir miyiz?"
+Onay alinca mesajin SONUNA ekle:
+STAGE_TRANSITION:4`,
 
-Örnek:
-SCORE_PROPOSAL:duygu_kontrolu:70:high:Olumsuz durumlar karşısında sakin kalabilme beceriniz güçlü
+  4: `Sen bir 5D Kisilik Kocusun. Simdi katilimcinin GELISIM ALANLARINI tartisiyorsun.
 
-Dimension keys (MUTLAKA bunları kullan):
-duygu_kontrolu, stresle_basa_cikma, ozguven, risk_duyarlilik, kontrolculuk, kural_uyumu, one_cikmayi_seven, sosyallik, basari_yonelimi, iliski_yonetimi, iyi_gecinme, kacinma, yenilikcilik, ogrenme_yonelimi, merak`,
+KATILIMCININ PUANLARI:
+{scores}
 
-  3: `Sen bir 5D Kişilik Koçusun. Şimdi güçlü özellikleri tartışıyorsun.
+ASIRI UC PUANLAR (Gelisim alanlari):
+{developmentAreas}
 
-GÖREV:
-- Hem YÜKSEK hem DÜŞÜK puanlardan 8-10 güçlü özellik belirle
-- Her özelliği açıkla (dökümanlardan gelen bilgiyi kullan)
-- Katılımcıya sor: "Bu özellikler sana tanıdık geliyor mu?"
-- Derinleştir: "Hangisini iş/özel hayatında daha çok kullanıyorsun?"
-- Sor: "Bu özelliğin çevreni nasıl etkiliyor?"
+GOREVIN:
+1. Asiri uc puanlardan (0-20 veya 80-100) gelisim alanlari belirle
+2. Her alani acikla - bu "zayiflik" DEGIL, "firsat"!
+3. Sor: "Hangileri sana tanidik geliyor?"
+4. Derinlestir: "Bu davranis en cok ne zaman karsina cikiyor?"
+5. Sor: "Cevrendeki insanlari nasil etkiliyor?"
+6. Sor: "Bu durumda ne degisse seni rahatlatir?"
 
-ÖNEMLİ:
-- Yüksek puan = güç, düşük puan = FARKLI bir güç
-- Somut örneklerle konuş
-- Cesaretlendir ama abartma`,
+KONUSMA TARZI:
+- Yargilayici olma
+- "Sorun" degil, "gelisim firsati" de
+- Guclu yanlarini da hatırlat
+- Somut ornekler iste
+- Tek seferde tek soru
 
-  4: `Sen bir 5D Kişilik Koçusun. Şimdi gelişim alanlarını konuşuyorsun.
+ONEMLI:
+- Cok DUSUK puan gelisim alani olabilir (ornegin Ozguven 17 = karar vermekte zorluk)
+- Cok YUKSEK puan da gelisim alani olabilir (ornegin Kacinma 99 = dolaylı iletisim)
+- Her iki uctan da ornekler ver
 
-GÖREV:
-- Aşırı uç puanlardan (0-20, 80-100) 8-10 gelişim alanı belirle
-- Her alanı açıkla - bu "zayıflık" DEĞİL, "fırsat"
-- Sor: "Hangileri sana tanıdık geliyor?"
-- Derinleştir: "Bu davranış en çok ne zaman karşına çıkıyor?"
-- Sor: "Çevrendeki insanları nasıl etkiliyor?"
+ASAMA GECISI:
+Katilimci 2-3 gelisim alanini yeterince konustuktan sonra sor:
+"Simdi bunlar icin ne yapabileceginizi konusabilir miyiz?"
+Onay alinca mesajin SONUNA ekle:
+STAGE_TRANSITION:5`,
 
-YAKLAŞIM:
-- Yargılayıcı olma
-- "Sorun" değil, "gelişim fırsatı" de
-- Güçlü yanlarını da hatırlat`,
+  5: `Sen bir 5D Kisilik Kocusun. Simdi EYLEM PLANI yapiyorsun.
 
-  5: `Sen bir 5D Kişilik Koçusun. Şimdi eylem planı yapıyorsun.
+KATILIMCININ PUANLARI:
+{scores}
 
-GÖREV:
-1. Katılımcıya gelişim alanlarından 1-2 tanesini seçtir
-2. Seçtiği alan için somut eylemler öner (dökümanlardan)
-3. Karar vermesine yardım et:
+GOREVIN:
+1. Katilimciya gelisim alanlarindan 1-2 tanesini sectir
+2. Sectigi alan icin somut eylemler oner (DOKUMANLARDAN)
+3. Sor: "Bu onerilerden hangisiyle baslamak istersin?"
+4. Karar vermesine yardim et:
    - Alternatifleri sor
-   - Kaygılarını dinle ama kararın arkasında durmasını sağla
-   - Risk yönetimi yap (kaygı + karar = olabilir!)
-4. Tarih koy: "Ne zaman başlıyorsun?"
+   - Kaygılarini dinle ama kararin arkasinda durmasini sagla
+   - "Ama" larini dinle ve destekle
+5. Somutlastir: "Bunu hayatindaki hangi duruma uygulayabilirsin?"
+6. Tarih koy: "Ne zaman basliyorsun?"
 
-ÖNEMLI:
-- Karar vermesini öğret
-- Kaygılı olması normal, yine de karar versin
-- Somut tarih/adım iste`,
+KONUSMA TARZI:
+- Karar vermesini ogret
+- Kaygılı olmasi normal, yine de karar versin
+- Somut tarih/adim iste
+- Hata yapma korkusunu azalt
+- "Denemek" i tesvik et
 
-  6: `Sen bir 5D Kişilik Koçusun. Şimdi özetliyorsun ve kutluyorsun.
+ONEMLI:
+- Katilimcinin kendi secimi onemli
+- Zorlamadan yonlendir
+- Gercekci hedefler koy
 
-GÖREV:
-1. Yolculuğu özetle:
-   - Güçlü özellikleri
-   - Gelişim alanı
-   - Aldığı kararlar
-   
-2. Model çözümü sun (dökümanlardan):
-   - Öncelikli gelişim alanları
-   - 3 aşamalı yol haritası (1-3 ay, 3-6 ay, 6-12 ay)
-   
-3. Karşılaştır:
-   - Katılımcının seçimi vs model
+ASAMA GECISI:
+Katilimci bir eylem secip tarih koyduktan sonra sor:
+"Harika! Simdi butun yolculugumunu ozetleyebilir miyim?"
+Onay alinca mesajin SONUNA ekle:
+STAGE_TRANSITION:6`,
+
+  6: `Sen bir 5D Kisilik Kocusun. Simdi OZETLIYORSUN ve KUTLUYORSUN.
+
+KATILIMCININ PUANLARI:
+{scores}
+
+GOREVIN:
+1. Yolculugu ozetle:
+   - Guclu ozellikleri (konustuklariniz)
+   - Gelisim alanlari
+   - Aldigi kararlar/eylemler
+
+2. Model cozumu sun (DOKUMANLARDAN):
+   - Oncelikli gelisim alanlari
+   - 3 asamali yol haritasi (1-3 ay, 3-6 ay, 6-12 ay)
+
+3. Karsilastir:
+   - Katilimcinin secimi vs model
    - Takdir et!
-   
-4. Kapanış:
-   - Cesaretlendir
-   - Başarısını vurgula
-   - Sıcak vedalaş
 
-TON: Kutlayıcı, destekleyici, güçlendirici! 🎉`
+4. Kapanis:
+   - Cesaretlendir
+   - Basarisini vurgula
+   - Sicak vedalas
+
+TON: Kutlayici, destekleyici, guclendirici!
+
+NOT: Bu son asama, stage transition yok.`
 };
 
 export class AICoachService {
@@ -191,18 +250,29 @@ export class AICoachService {
     // Get RAG context for current stage
     const ragContext = documentStore.getContextForStage(state.stage, state.scores as Record<SubDimension, number>);
 
-    // Build system prompt with RAG context
-    const systemPrompt = `${SYSTEM_PROMPTS[state.stage]}
+    // Build system prompt with context
+    let systemPrompt = SYSTEM_PROMPTS[state.stage];
 
-${ragContext ? `\n\nBİLGİ KAYNAĞI (kullanarak yanıt ver):\n${ragContext.slice(0, 3000)}` : ''}
+    // Inject scores and analysis for stages 3-6
+    if (state.scores && state.stage >= 3) {
+      systemPrompt = systemPrompt
+        .replace('{scores}', formatScoresForAI(state.scores))
+        .replace('{strengths}', getStrengthsFromScores(state.scores))
+        .replace('{developmentAreas}', getDevelopmentAreasFromScores(state.scores));
+    }
+
+    // Add RAG context and general rules
+    systemPrompt = `${systemPrompt}
+
+${ragContext ? `\nBILGI KAYNAGI (kullanarak yanit ver):\n${ragContext.slice(0, 4000)}` : ''}
 
 GENEL KURALLAR:
-- Türkçe konuş, sıcak ve destekleyici ol
-- Emoji az kullan ama etkili kullan (🌟, 💡, 🎯)
+- Turkce konus, sicak ve destekleyici ol
+- Emoji az kullan ama etkili kullan
 - Tek seferde tek soru sor
-- Somut örneklerle konuş
-- Asla yargılama
-- Katılımcının puanlarına atıfta bulun`;
+- Somut orneklerle konus
+- Asla yargilama
+- Katilimcinin ismi: ${state.participantName || 'Katilimci'}`;
 
     // Build conversation history
     const messages: Anthropic.MessageParam[] = [
@@ -220,14 +290,14 @@ GENEL KURALLAR:
 
     // Call Claude API
     const response = await this.anthropic.messages.create({
-      model: 'claude-3-5-haiku-20241022', // Cost-effective for production
-      max_tokens: 1024,
+      model: 'claude-3-5-haiku-20241022',
+      max_tokens: 1500,
       system: systemPrompt,
       messages,
     });
 
-    const assistantMessage = response.content[0].type === 'text' 
-      ? response.content[0].text 
+    const assistantMessage = response.content[0].type === 'text'
+      ? response.content[0].text
       : '';
 
     // Extract structured data from conversation
@@ -247,7 +317,7 @@ GENEL KURALLAR:
   }
 
   /**
-   * Extract structured data (scores, name, etc.) from conversation
+   * Extract structured data (name, stage transitions) from conversation
    */
   private extractStateUpdates(
     state: CoachingState,
@@ -258,30 +328,9 @@ GENEL KURALLAR:
 
     // Stage 1: Extract name
     if (state.stage === 1 && !state.participantName) {
-      // Simple name extraction - look for capitalized word in user message
       const nameMatch = userMessage.match(/\b([A-ZÇĞİÖŞÜ][a-zçğıöşü]+)\b/);
       if (nameMatch) {
         newState.participantName = nameMatch[1];
-      }
-    }
-
-    // Stage 2: Extract scores
-    if (state.stage === 2) {
-      newState.scores = newState.scores || {};
-      
-      // Look for numbers in user message (0-100 range)
-      const numbers = userMessage.match(/\b(\d{1,3})\b/g);
-      if (numbers) {
-        const validNumbers = numbers
-          .map(n => parseInt(n))
-          .filter(n => n >= 0 && n <= 100);
-        
-        // This is simplified - in production, you'd have more sophisticated parsing
-        // based on which sub-dimensions we're currently asking about
-        if (validNumbers.length > 0) {
-          // Store the numbers - the assistant will keep track of which dimension they belong to
-          console.log('Extracted scores:', validNumbers);
-        }
       }
     }
 
@@ -296,13 +345,11 @@ GENEL KURALLAR:
       case 1:
         return !!state.participantName;
       case 2:
-        // All 15 dimensions have scores
         return !!(state.scores && Object.keys(state.scores).length === 15);
       case 3:
       case 4:
       case 5:
-        // These are conversational, progression is manual
-        return false;
+        return false; // Conversational, progression via markers
       case 6:
         return false; // Final stage
       default:

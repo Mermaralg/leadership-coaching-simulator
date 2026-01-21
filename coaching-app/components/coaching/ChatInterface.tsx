@@ -2,25 +2,17 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Message } from '@/lib/services/aiCoach';
-import { ScoreProposal } from '@/lib/scoring/scoreInference';
-import { ScoreValidation } from './ScoreValidation';
 
 interface ChatInterfaceProps {
   onSendMessage: (message: string) => void;
   messages: Message[];
   isLoading?: boolean;
-  pendingProposal?: ScoreProposal | null;
-  onValidateScore?: (adjustedScore?: number) => void;
-  onRejectScore?: () => void;
 }
 
-export default function ChatInterface({ 
-  onSendMessage, 
-  messages, 
+export default function ChatInterface({
+  onSendMessage,
+  messages,
   isLoading,
-  pendingProposal,
-  onValidateScore,
-  onRejectScore,
 }: ChatInterfaceProps) {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -65,7 +57,7 @@ export default function ChatInterface({
             <div
               className={`max-w-[80%] rounded-lg px-4 py-3 ${
                 message.role === 'user'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-purple-600 text-white'
                   : message.role === 'assistant'
                   ? 'bg-purple-50 text-gray-900 border border-purple-200'
                   : 'bg-amber-100 text-amber-900 text-sm italic'
@@ -75,7 +67,7 @@ export default function ChatInterface({
             </div>
           </div>
         ))}
-        
+
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-purple-50 border border-purple-200 rounded-lg px-4 py-3">
@@ -88,19 +80,6 @@ export default function ChatInterface({
           </div>
         )}
 
-        {/* Score validation UI */}
-        {pendingProposal && onValidateScore && onRejectScore && (
-          <div className="flex justify-start">
-            <div className="max-w-[80%]">
-              <ScoreValidation
-                proposal={pendingProposal}
-                onValidate={onValidateScore}
-                onReject={onRejectScore}
-              />
-            </div>
-          </div>
-        )}
-        
         <div ref={messagesEndRef} />
       </div>
 
@@ -112,9 +91,9 @@ export default function ChatInterface({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Mesajınızı yazın..."
+            placeholder="Mesajinizi yazin..."
             disabled={isLoading}
-            className="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
             rows={1}
             style={{
               minHeight: '52px',
@@ -123,10 +102,10 @@ export default function ChatInterface({
           />
           <button
             type="submit"
-            disabled={!input.trim() || isLoading || !!pendingProposal}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            disabled={!input.trim() || isLoading}
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
-            Gönder
+            Gonder
           </button>
         </form>
       </div>
