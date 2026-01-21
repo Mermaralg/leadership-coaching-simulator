@@ -18,9 +18,16 @@ export async function POST(request: NextRequest) {
     // Generate AI response
     const { response, updatedState } = await aiCoach.generateResponse(state, message);
 
+    // Check for stage transitions
+    const stageTransitionMatch = response.match(/STAGE_TRANSITION:(\d+)/);
+    if (stageTransitionMatch) {
+      const newStage = parseInt(stageTransitionMatch[1]);
+      updatedState.stage = newStage as CoachingState['stage'];
+    }
+
     // Try to detect score proposals in Stage 2
     let scoreProposal = null;
-    if (state.stage === 2) {
+    if (updatedState.stage === 2) {
       // Look for score proposal markers in the response
       const scoreMarkerMatch = response.match(/SCORE_PROPOSAL:(\w+):(\d+):(low|medium|high):([\s\S]+)/);
       
@@ -40,10 +47,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Clean up markers from response
+    let cleanResponse = response;
+    cleanResponse = cleanResponse.replace(/STAGE_TRANSITION:\d+/, '').trim();
+    if (scoreProposal) {
+      cleanResponse = cleanResponse.replace(/SCORE_PROPOSAL:[\s\S]+/, '').trim();
+    }
+
     return NextResponse.json({
-      response: scoreProposal 
-        ? response.replace(/SCORE_PROPOSAL:[\s\S]+/, '').trim() 
-        : response,
+      response: cleanResponse,
       state: updatedState,
       scoreProposal,
     });
