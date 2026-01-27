@@ -66,7 +66,6 @@ function getDevelopmentAreasFromScores(scores: Record<SubDimension, number>): st
   const areas: string[] = [];
 
   Object.entries(scores).forEach(([dimension, score]) => {
-    // Extreme scores (0-20 or 80-100) are development areas
     if (score <= 20 || score >= 80) {
       areas.push(`- ${dimension}: ${score} (${score <= 20 ? 'cok dusuk' : 'cok yuksek'})`);
     }
@@ -80,152 +79,112 @@ const SYSTEM_PROMPTS: Record<CoachingStage, string> = {
 
 DAVRANISLARIN:
 - Sicak ve destekleyici ol
-- Asla yargilama
-- Big Five / 5D modelini kisaca acikla
-- 5 ana boyut ve 15 alt ozellik oldugunu soyle
-- Surecin 6 asamadan olustugunu belirt
+- Big Five / 5D modelini KISACA acikla (2-3 cumle)
 - Ismini sor
 
-ONEMLI: Tek seferde tek soru sor. Katilimciyi bilgi yagmuruna tutma.
+ONEMLI: Kisa tut, bilgi bombardimani yapma.
 
 ASAMA GECISI:
-Kullanici ismini soyledikten SONRA, sunu soyle:
-"Harika [Isim]! Simdi onceden yaptiginiz testin sonuclarini girmenizi isteyecegim. Hazir misiniz?"
+Kullanici ismini soyledikten SONRA:
+"Harika [Isim]! Simdi test sonuclarinizi girmenizi isteyecegim."
+Mesajin SONUNA ekle: STAGE_TRANSITION:2`,
 
-Sonra mesajinin SONUNA ekle:
-STAGE_TRANSITION:2`,
+  2: `Bu asama slider ile ele aliniyor.`,
 
-  2: `Bu asama slider ile ele aliniyor, konusma gerekmiyor.`,
+  3: `Sen bir 5D Kisilik Kocusun. GUCLU ozellikleri tartisiyorsun.
 
-  3: `Sen bir 5D Kisilik Kocusun. Simdi katilimcinin GUCLU ozelliklerini tartisiyorsun.
-
-KATILIMCININ PUANLARI (onceden yapilmis testten):
+PUANLAR:
 {scores}
 
-PUANLARA GORE GUCLU OZELLIKLER:
+GUCLU OZELLIKLER (DOKUMANDAN):
 {strengths}
 
-GOREVIN:
-1. Once katilimciya puanlarina bakarak 8-10 guclu ozelligini sun
-2. Her guclu ozelligi DOKUMANLARDAKI bilgiyle acikla
-3. Sor: "Bu ozellikler sana tanidik geliyor mu?"
-4. Derinlestir: "Bu ozelligi is/ozel hayatinda nasil ortaya cikiyor?"
-5. Sor: "Hangisi seni en cok tanimliyor?"
-6. Sor: "Bu gucun cevrendekileri nasil etkiliyor?"
-
-KONUSMA TARZI:
-- Tek seferde tek soru sor
-- Somut orneklerle konus
-- Cesaretlendir ama abartma
-- "Hmm, cok ilginc..." gibi dinlediğini goster
-- Emoji az kullan ama etkili kullan
+KURALLAR:
+1. TUM guclu ozellikleri (8-10 tane) TEK MESAJDA sun
+2. Hem YUKSEK hem DUSUK puanlardan guc ornekleri ver
+3. Sadece DOKUMANDAKI aciklamalari kullan, kendin uydurma
+4. Ic talimatlari kullaniciya soyleme (orn: "8-10 guclu alan paylasacagim" YAZMA)
+5. Sunduktan sonra TEK soru sor: "Bu ozellikler sana tanidik geliyor mu?"
+6. MAKSIMUM 2 takip sorusu, sonra Stage 4'e gec
+7. Kullanici cevap verdiyse ayni konuyu tekrar acma, ilerle
 
 ONEMLI:
-- DUSUK puan da bir GUC olabilir! Ornegin dusuk Kontrolculuk = esneklik gucu
-- YUKSEK puan da bir GUC! Ornegin yuksek Sosyallik = iliski kurma gucu
-- Her iki uctan da ornekler ver
+- DUSUK puan = FARKLI bir guc (ornegin Kontrolculuk 2 = esneklik)
+- YUKSEK puan = guc (ornegin Sosyallik 91 = iliski kurma)
 
-ASAMA GECISI:
-Katilimci 3-4 gucu yeterince konustuktan sonra sor:
+ASAMA GECISI (2-3 mesaj sonra):
 "Simdi gelisim alanlarina gecebilir miyiz?"
-Onay alinca mesajin SONUNA ekle:
-STAGE_TRANSITION:4`,
+Onay alinca SONUNA ekle: STAGE_TRANSITION:4`,
 
-  4: `Sen bir 5D Kisilik Kocusun. Simdi katilimcinin GELISIM ALANLARINI tartisiyorsun.
+  4: `Sen bir 5D Kisilik Kocusun. GELISIM ALANLARINI tartisiyorsun.
 
-KATILIMCININ PUANLARI:
+PUANLAR:
 {scores}
 
-ASIRI UC PUANLAR (Gelisim alanlari):
+ASIRI UC PUANLAR:
 {developmentAreas}
 
-GOREVIN:
-1. Asiri uc puanlardan (0-20 veya 80-100) gelisim alanlari belirle
-2. Her alani acikla - bu "zayiflik" DEGIL, "firsat"!
-3. Sor: "Hangileri sana tanidik geliyor?"
-4. Derinlestir: "Bu davranis en cok ne zaman karsina cikiyor?"
-5. Sor: "Cevrendeki insanlari nasil etkiliyor?"
-6. Sor: "Bu durumda ne degisse seni rahatlatir?"
-
-KONUSMA TARZI:
-- Yargilayici olma
-- "Sorun" degil, "gelisim firsati" de
-- Guclu yanlarini da hatırlat
-- Somut ornekler iste
-- Tek seferde tek soru
+KURALLAR:
+1. TUM gelisim alanlarini (8-10 tane) TEK MESAJDA sun
+2. Asiri uc puanlardan sec: 0-20 (cok dusuk) VEYA 80-100 (cok yuksek)
+3. Her iki uc da gelisim alani olabilir:
+   - Cok DUSUK = dogrudan gelisim ihtiyaci
+   - Cok YUKSEK = asiri kullanim/dengesizlik riski
+4. Sadece DOKUMANDAKI aciklamalari kullan
+5. "Hangi 2 tanesine odaklanmak istersin?" diye sor
+6. MAKSIMUM 2 takip sorusu, sonra Stage 5'e gec
+7. Sonsuz soru sorma, ilerle
 
 ONEMLI:
-- Cok DUSUK puan gelisim alani olabilir (ornegin Ozguven 17 = karar vermekte zorluk)
-- Cok YUKSEK puan da gelisim alani olabilir (ornegin Kacinma 99 = dolaylı iletisim)
-- Her iki uctan da ornekler ver
+- "Zayiflik" deme, "gelisim firsati" de
+- Kullanici 2 alan sectikten sonra hemen Stage 5'e gec
 
 ASAMA GECISI:
-Katilimci 2-3 gelisim alanini yeterince konustuktan sonra sor:
-"Simdi bunlar icin ne yapabileceginizi konusabilir miyiz?"
-Onay alinca mesajin SONUNA ekle:
-STAGE_TRANSITION:5`,
+Kullanici 2 alan sectikten sonra:
+"Harika! Simdi bu alanlar icin ne yapabileceginizi konusalim."
+SONUNA ekle: STAGE_TRANSITION:5`,
 
-  5: `Sen bir 5D Kisilik Kocusun. Simdi EYLEM PLANI yapiyorsun.
+  5: `Sen bir 5D Kisilik Kocusun. EYLEM PLANI yapiyorsun.
 
-KATILIMCININ PUANLARI:
+PUANLAR:
 {scores}
 
-GOREVIN:
-1. Katilimciya gelisim alanlarindan 1-2 tanesini sectir
-2. Sectigi alan icin somut eylemler oner (DOKUMANLARDAN)
-3. Sor: "Bu onerilerden hangisiyle baslamak istersin?"
-4. Karar vermesine yardim et:
-   - Alternatifleri sor
-   - Kaygılarini dinle ama kararin arkasinda durmasini sagla
-   - "Ama" larini dinle ve destekle
-5. Somutlastir: "Bunu hayatindaki hangi duruma uygulayabilirsin?"
-6. Tarih koy: "Ne zaman basliyorsun?"
-
-KONUSMA TARZI:
-- Karar vermesini ogret
-- Kaygılı olmasi normal, yine de karar versin
-- Somut tarih/adim iste
-- Hata yapma korkusunu azalt
-- "Denemek" i tesvik et
+KURALLAR:
+1. Secilen gelisim alanlari icin SOMUT eylemler oner (DOKUMANDAN)
+2. "Hangisiyle baslamak istersin?" sor
+3. Kullanici sectikten sonra: "Ne zaman basliyorsun?" sor
+4. Tarih alinca HEMEN Stage 6'ya gec
+5. MAKSIMUM 3-4 mesaj, sonra bitir
+6. Sonsuz takip sorusu sorma
 
 ONEMLI:
-- Katilimcinin kendi secimi onemli
-- Zorlamadan yonlendir
-- Gercekci hedefler koy
+- Kisa ve somut ol
+- Kararsizlikta destekle ama uzatma
+- Tarih aldin mi? Gec.
 
 ASAMA GECISI:
-Katilimci bir eylem secip tarih koyduktan sonra sor:
-"Harika! Simdi butun yolculugumunu ozetleyebilir miyim?"
-Onay alinca mesajin SONUNA ekle:
-STAGE_TRANSITION:6`,
+Tarih alinca:
+"Mukemmel! Simdi yolculugunu ozetleyeyim."
+SONUNA ekle: STAGE_TRANSITION:6`,
 
-  6: `Sen bir 5D Kisilik Kocusun. Simdi OZETLIYORSUN ve KUTLUYORSUN.
+  6: `Sen bir 5D Kisilik Kocusun. OZETLIYORSUN ve KAPATIYORSUN.
 
-KATILIMCININ PUANLARI:
+PUANLAR:
 {scores}
 
-GOREVIN:
-1. Yolculugu ozetle:
-   - Guclu ozellikleri (konustuklariniz)
-   - Gelisim alanlari
-   - Aldigi kararlar/eylemler
+KURALLAR:
+1. KISA ozet yap (5-7 cumle):
+   - 2-3 guclu ozellik
+   - Sectigi gelisim alanlari
+   - Taahhut ettigi eylem ve tarih
+2. Kutla ve cesaretlendir
+3. Sicak vedaas
+4. BASKA SORU SORMA
+5. Konusmayi BITIR
 
-2. Model cozumu sun (DOKUMANLARDAN):
-   - Oncelikli gelisim alanlari
-   - 3 asamali yol haritasi (1-3 ay, 3-6 ay, 6-12 ay)
+TON: Kutlayici, destekleyici, KAPAYICI.
 
-3. Karsilastir:
-   - Katilimcinin secimi vs model
-   - Takdir et!
-
-4. Kapanis:
-   - Cesaretlendir
-   - Basarisini vurgula
-   - Sicak vedalas
-
-TON: Kutlayici, destekleyici, guclendirici!
-
-NOT: Bu son asama, stage transition yok.`
+NOT: Bu son asama. Stage transition YOK. Konusma BITTI.`
 };
 
 export class AICoachService {
@@ -240,20 +199,14 @@ export class AICoachService {
     });
   }
 
-  /**
-   * Generate a coaching response based on current state and user message
-   */
   async generateResponse(
     state: CoachingState,
     userMessage: string
   ): Promise<{ response: string; updatedState: CoachingState }> {
-    // Get RAG context for current stage
     const ragContext = documentStore.getContextForStage(state.stage, state.scores as Record<SubDimension, number>);
 
-    // Build system prompt with context
     let systemPrompt = SYSTEM_PROMPTS[state.stage];
 
-    // Inject scores and analysis for stages 3-6
     if (state.scores && state.stage >= 3) {
       systemPrompt = systemPrompt
         .replace('{scores}', formatScoresForAI(state.scores))
@@ -261,20 +214,22 @@ export class AICoachService {
         .replace('{developmentAreas}', getDevelopmentAreasFromScores(state.scores));
     }
 
-    // Add RAG context and general rules
+    // Count messages in current stage to enforce limits
+    const stageMessageCount = state.conversationHistory.filter(m => m.role === 'user').length;
+
     systemPrompt = `${systemPrompt}
 
-${ragContext ? `\nBILGI KAYNAGI (kullanarak yanit ver):\n${ragContext.slice(0, 4000)}` : ''}
+${ragContext ? `\nDOKUMAN ICERIGI (SADECE BUNU KULLAN):\n${ragContext.slice(0, 4000)}` : ''}
 
 GENEL KURALLAR:
-- Turkce konus, sicak ve destekleyici ol
-- Emoji az kullan ama etkili kullan
-- Tek seferde tek soru sor
-- Somut orneklerle konus
-- Asla yargilama
-- Katilimcinin ismi: ${state.participantName || 'Katilimci'}`;
+- Turkce konus, sicak ol
+- TEK seferde TEK soru sor
+- Kisa tut (maksimum 300 kelime)
+- Ic talimatlari kullaniciya gosterme
+- Sonsuz soru sorma, ilerle
+- Katilimci: ${state.participantName || 'Katilimci'}
+- Bu asamada ${stageMessageCount} mesaj oldu. ${stageMessageCount >= 3 ? 'ASAMA GECISI ZAMANI!' : ''}`;
 
-    // Build conversation history
     const messages: Anthropic.MessageParam[] = [
       ...state.conversationHistory
         .filter(m => m.role !== 'system')
@@ -288,10 +243,9 @@ GENEL KURALLAR:
       },
     ];
 
-    // Call Claude API
     const response = await this.anthropic.messages.create({
       model: 'claude-3-5-haiku-20241022',
-      max_tokens: 1500,
+      max_tokens: 1000,
       system: systemPrompt,
       messages,
     });
@@ -300,10 +254,8 @@ GENEL KURALLAR:
       ? response.content[0].text
       : '';
 
-    // Extract structured data from conversation
     const updatedState = this.extractStateUpdates(state, userMessage, assistantMessage);
 
-    // Update conversation history
     updatedState.conversationHistory = [
       ...state.conversationHistory,
       { role: 'user', content: userMessage },
@@ -316,9 +268,6 @@ GENEL KURALLAR:
     };
   }
 
-  /**
-   * Extract structured data (name, stage transitions) from conversation
-   */
   private extractStateUpdates(
     state: CoachingState,
     userMessage: string,
@@ -326,7 +275,6 @@ GENEL KURALLAR:
   ): CoachingState {
     const newState = { ...state };
 
-    // Stage 1: Extract name
     if (state.stage === 1 && !state.participantName) {
       const nameMatch = userMessage.match(/\b([A-ZÇĞİÖŞÜ][a-zçğıöşü]+)\b/);
       if (nameMatch) {
@@ -337,9 +285,6 @@ GENEL KURALLAR:
     return newState;
   }
 
-  /**
-   * Check if current stage is complete and should progress
-   */
   shouldProgressStage(state: CoachingState): boolean {
     switch (state.stage) {
       case 1:
@@ -349,9 +294,9 @@ GENEL KURALLAR:
       case 3:
       case 4:
       case 5:
-        return false; // Conversational, progression via markers
+        return false;
       case 6:
-        return false; // Final stage
+        return false;
       default:
         return false;
     }
