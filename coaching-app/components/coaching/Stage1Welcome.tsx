@@ -22,7 +22,7 @@ export default function Stage1Welcome() {
             5D Kişilik Koçluk Simülatörü
           </h1>
           <p className="text-lg text-gray-600">
-            Kurumsal Liderlik Gelişimi
+            Kişisel ve Profesyonel Gelişim
           </p>
         </div>
 
@@ -42,23 +42,23 @@ export default function Stage1Welcome() {
             <ul className="space-y-2 text-gray-700">
               <li className="flex items-start">
                 <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Duygusal Denge:</strong> Duygu kontrolü, stres yönetimi, özgüven</span>
+                <span><strong>Duygusal Denge:</strong> Duygu Kontrolü, Stresle Başa Çıkma, Özgüven</span>
               </li>
               <li className="flex items-start">
                 <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Dikkat ve Düzen:</strong> Risk duyarlılık, kontrol, kurallara uyum</span>
+                <span><strong>Dikkat ve Düzen:</strong> Risk Duyarlılık, Kontrolcülük, Kural Uyumu</span>
               </li>
               <li className="flex items-start">
                 <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Dışadönüklük:</strong> Sosyallik, öne çıkma, başarı yönelimi</span>
+                <span><strong>Dışadönüklük:</strong> Öne Çıkmayı Seven, Sosyallik, Başarı Yönelimi</span>
               </li>
               <li className="flex items-start">
                 <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Dengeli İlişki:</strong> İlişki yönetimi, işbirliği, çatışma yönetimi</span>
+                <span><strong>Dengeli İlişki:</strong> İlişki Yönetimi, İyi Geçinme, Kaçınma</span>
               </li>
               <li className="flex items-start">
                 <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Deneyime Açıklık:</strong> Yenilikçilik, öğrenme, merak</span>
+                <span><strong>Deneyime Açıklık:</strong> Yenilikçilik, Öğrenme Yönelimi, Merak</span>
               </li>
             </ul>
           </div>
