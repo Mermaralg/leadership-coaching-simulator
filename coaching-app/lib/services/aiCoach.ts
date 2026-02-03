@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { SubDimension, CoachingStage } from '@/types/coaching';
 import { documentStore } from './documentStore';
+import { CoachAttitude, DEFAULT_ATTITUDE } from '@/lib/context/CoachingContext';
 
 export interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -359,7 +360,8 @@ export class AICoachService {
 
   async generateResponse(
     state: CoachingState,
-    userMessage: string
+    userMessage: string,
+    attitude: CoachAttitude = DEFAULT_ATTITUDE
   ): Promise<{ response: string; updatedState: CoachingState }> {
     // Get document content for current stage
     const ragContext = documentStore.getContextForStage(state.stage, state.scores as Record<SubDimension, number>);
@@ -393,11 +395,17 @@ ${ragContext}
 SADECE BU DOKUMANLARI KULLAN. KENDI BILGINLE OZELLIK/ONERI EKLEME.`;
     }
 
-    // Add general rules
+    // Build attitude instructions based on settings
+    const attitudeInstructions = this.buildAttitudeInstructions(attitude);
+
+    // Add general rules with attitude
     systemPrompt = `${systemPrompt}
 
+===== KOC TUTUMU (TARS MODU) =====
+${attitudeInstructions}
+
 GENEL KURALLAR:
-- Turkce konus, sicak ol
+- Turkce konus
 - TEK seferde TEK soru sor
 - Ic talimatlari kullaniciya gosterme
 - Sonsuz soru sorma, ilerle
@@ -439,6 +447,48 @@ GENEL KURALLAR:
       response: assistantMessage,
       updatedState,
     };
+  }
+
+  private buildAttitudeInstructions(attitude: CoachAttitude): string {
+    const instructions: string[] = [];
+
+    // Directness (0 = soft, 100 = very direct)
+    if (attitude.directness >= 70) {
+      instructions.push('- Dogrudan ve net konus, lafı dolandırma');
+      instructions.push('- Sorunları/zayıflıkları acikca belirt');
+    } else if (attitude.directness >= 40) {
+      instructions.push('- Dengeli bir sekilde hem olumlu hem olumsuz konuları ele al');
+    } else {
+      instructions.push('- Yumusak bir dil kullan');
+      instructions.push('- Olumsuz konuları nazikce ifade et');
+    }
+
+    // Challenge level (0 = accepting, 100 = very challenging)
+    if (attitude.challengeLevel >= 70) {
+      instructions.push('- Katılımcının cevaplarını sorgula ve derinleştir');
+      instructions.push('- Kolay cevaplari kabul etme, daha fazlasini iste');
+      instructions.push('- Celiskileri kesfet ve sor');
+    } else if (attitude.challengeLevel >= 40) {
+      instructions.push('- Bazen sorgulayici ol ama asiri zorlama');
+    } else {
+      instructions.push('- Katılımcının cevaplarını kabul et');
+      instructions.push('- Destekleyici ve onaylayici ol');
+    }
+
+    // Growth focus (0 = celebrate strengths, 100 = push growth)
+    if (attitude.growthFocus >= 70) {
+      instructions.push('- GELISIM ALANLARINA ODAKLAN');
+      instructions.push('- Guclu yanlari kisa tut, hemen gelisim alanlarına gec');
+      instructions.push('- Degisim icin somut adimlar iste');
+      instructions.push('- "Mükemmel", "Harika" gibi asiri ovguden kacin');
+    } else if (attitude.growthFocus >= 40) {
+      instructions.push('- Guclu yanlar ve gelisim alanlarını dengeli ele al');
+    } else {
+      instructions.push('- Oncelikle guclu yanlari kutla');
+      instructions.push('- Pozitif ve destekleyici ol');
+    }
+
+    return instructions.join('\n');
   }
 
   private extractStateUpdates(

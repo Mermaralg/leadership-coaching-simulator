@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useCoaching } from '@/lib/context/CoachingContext';
+import { useCoaching, CoachAttitude } from '@/lib/context/CoachingContext';
 import { Message, CoachingState } from '@/lib/services/aiCoach';
 import ChatInterface from './ChatInterface';
 import { SubDimension } from '@/types/coaching';
@@ -10,26 +10,25 @@ const STAGE_TITLES: Record<number, string> = {
   3: 'Guclu Ozellikler',
   4: 'Gelisim Alanlari',
   5: 'Eylem Plani',
-  6: 'Ozet ve Kapanıs',
+  6: 'Ozet ve Kapanis',
 };
 
 export default function ConversationalCoaching() {
-  const { session, nextStage } = useCoaching();
+  const { session, nextStage, coachAttitude, setCoachAttitude } = useCoaching();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [allMessages, setAllMessages] = useState<Message[]>([]); // Track ALL messages across stages
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [coachingState, setCoachingState] = useState<CoachingState | null>(null);
   const [sessionComplete, setSessionComplete] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const initializedStage = useRef<number | null>(null);
 
-  // Initialize coaching state and send initial message when component mounts or stage changes
   useEffect(() => {
     if (!session) return;
     if (initializedStage.current === session.currentStage) return;
 
     initializedStage.current = session.currentStage;
 
-    // Initialize state for the current stage
     const initialState: CoachingState = {
       stage: session.currentStage as CoachingState['stage'],
       participantName: session.participantName,
@@ -40,7 +39,6 @@ export default function ConversationalCoaching() {
     };
     setCoachingState(initialState);
 
-    // Add stage marker to all messages
     if (session.currentStage >= 3) {
       const stageMarker: Message = {
         role: 'system',
@@ -61,6 +59,7 @@ export default function ConversationalCoaching() {
         body: JSON.stringify({
           message: 'Basla',
           state,
+          attitude: coachAttitude,
         }),
       });
 
@@ -73,7 +72,6 @@ export default function ConversationalCoaching() {
       setAllMessages(prev => [...prev, assistantMsg]);
       setCoachingState(data.state);
 
-      // Check if this is the final stage and conversation seems complete
       if (data.state.stage === 6) {
         setSessionComplete(true);
       }
@@ -109,6 +107,7 @@ export default function ConversationalCoaching() {
         body: JSON.stringify({
           message: userMessage,
           state: stateWithHistory,
+          attitude: coachAttitude,
         }),
       });
 
@@ -117,12 +116,10 @@ export default function ConversationalCoaching() {
       const data = await response.json();
       const assistantMsg: Message = { role: 'assistant', content: data.response };
 
-      // Check if stage changed
       if (data.state.stage !== coachingState.stage) {
         nextStage();
         setMessages([assistantMsg]);
 
-        // Add stage marker and message to all messages
         const stageMarker: Message = {
           role: 'system',
           content: `--- ${STAGE_TITLES[data.state.stage]} ---`
@@ -135,7 +132,6 @@ export default function ConversationalCoaching() {
 
       setCoachingState(data.state);
 
-      // Mark session complete when we reach stage 6
       if (data.state.stage === 6) {
         setSessionComplete(true);
       }
@@ -152,11 +148,10 @@ export default function ConversationalCoaching() {
     if (!session) return;
 
     const date = new Date().toLocaleDateString('tr-TR');
-    let markdown = `# 5D Kisilik Kocluk Seansı\n\n`;
+    let markdown = `# 5D Kisilik Kocluk Seansi\n\n`;
     markdown += `**Katilimci:** ${session.participantName}\n`;
     markdown += `**Tarih:** ${date}\n\n`;
 
-    // Add scores summary
     if (session.profile?.scores) {
       markdown += `## Kisilik Puanlari\n\n`;
       const dimensionNames: Record<string, string> = {
@@ -194,7 +189,6 @@ export default function ConversationalCoaching() {
       }
     });
 
-    // Create and download file
     const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -204,6 +198,10 @@ export default function ConversationalCoaching() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleAttitudeChange = (key: keyof CoachAttitude, value: number) => {
+    setCoachAttitude({ ...coachAttitude, [key]: value });
   };
 
   if (!session) return null;
@@ -226,6 +224,18 @@ export default function ConversationalCoaching() {
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Settings Button */}
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
+                title="Koc Ayarlari"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+
               {/* Download Button */}
               {sessionComplete && (
                 <button
@@ -258,6 +268,74 @@ export default function ConversationalCoaching() {
               </div>
             </div>
           </div>
+
+          {/* Settings Panel (TARS-style) */}
+          {showSettings && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Koc Ayarlari (TARS Modu)</h3>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-xs text-gray-600 mb-1">
+                    <span>Dogrudan Konusma</span>
+                    <span>{coachAttitude.directness}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={coachAttitude.directness}
+                    onChange={(e) => handleAttitudeChange('directness', parseInt(e.target.value))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>Yumusak</span>
+                    <span>Dogrudan</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-xs text-gray-600 mb-1">
+                    <span>Zorlama Seviyesi</span>
+                    <span>{coachAttitude.challengeLevel}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={coachAttitude.challengeLevel}
+                    onChange={(e) => handleAttitudeChange('challengeLevel', parseInt(e.target.value))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>Kabul Edici</span>
+                    <span>Zorlayici</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-xs text-gray-600 mb-1">
+                    <span>Gelisim Odagi</span>
+                    <span>{coachAttitude.growthFocus}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={coachAttitude.growthFocus}
+                    onChange={(e) => handleAttitudeChange('growthFocus', parseInt(e.target.value))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>Guclu Yanlar</span>
+                    <span>Gelisim Alanlari</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-3">
+                Bu ayarlar kocun konusma tarzini etkiler. Yuksek degerler daha dogrudan ve zorlayici bir yaklasim saglar.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

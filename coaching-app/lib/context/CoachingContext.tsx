@@ -6,20 +6,33 @@ import {
   CoachingStage,
   SubDimension,
   PersonalityProfile,
-  StrengthItem,
-  DevelopmentItem,
 } from '@/types/coaching';
 import { analyzeStrengths, analyzeDevelopmentAreas } from '../utils/scoring';
 import { DimensionScores, ScoreProposal } from '../scoring/scoreInference';
 
+// Coach attitude settings (like TARS from Interstellar)
+export interface CoachAttitude {
+  directness: number;      // 0-100: How directly the coach points out issues
+  challengeLevel: number;  // 0-100: How much the coach challenges/pushes back
+  growthFocus: number;     // 0-100: Balance between celebrating strengths vs pushing growth
+}
+
+export const DEFAULT_ATTITUDE: CoachAttitude = {
+  directness: 70,      // Fairly direct
+  challengeLevel: 60,  // Moderate challenge
+  growthFocus: 60,     // Slightly more growth-focused
+};
+
 interface CoachingContextType {
   session: CoachingSession | null;
   dimensionScores: DimensionScores;
+  coachAttitude: CoachAttitude;
   startSession: (name: string) => void;
   updateScores: (scores: Record<SubDimension, number>, moveToNextStage?: boolean) => void;
   updateDimensionScore: (dimension: SubDimension, score: number, proposal?: ScoreProposal) => void;
   validateDimensionScore: (dimension: SubDimension) => void;
   selectDevelopmentAreas: (areas: SubDimension[]) => void;
+  setCoachAttitude: (attitude: CoachAttitude) => void;
   nextStage: () => void;
   previousStage: () => void;
   completeSession: () => void;
@@ -30,52 +43,40 @@ const CoachingContext = createContext<CoachingContextType | undefined>(undefined
 export function CoachingProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<CoachingSession | null>(null);
   const [dimensionScores, setDimensionScores] = useState<DimensionScores>({});
+  const [coachAttitude, setCoachAttitudeState] = useState<CoachAttitude>(DEFAULT_ATTITUDE);
 
   const startSession = (name: string) => {
     const newSession: CoachingSession = {
       id: Date.now().toString(),
       participantName: name,
-      currentStage: 2, // Start at stage 2 (scores) since stage 1 is the welcome screen
+      currentStage: 2,
       startedAt: new Date(),
     };
     setSession(newSession);
-    setDimensionScores({}); // Reset scores for new session
+    setDimensionScores({});
   };
 
   const updateScores = (scores: Record<SubDimension, number>, moveToNextStage = false) => {
-    console.log('CoachingContext.updateScores called with:', scores, 'moveToNextStage:', moveToNextStage);
-    console.log('Current session:', session);
-    
-    if (!session) {
-      console.error('No session exists!');
-      return;
-    }
+    if (!session) return;
 
     const profile: PersonalityProfile = {
       participantName: session.participantName,
       scores,
       createdAt: new Date(),
     };
-    console.log('Created profile:', profile);
 
     const strengths = analyzeStrengths(scores);
-    console.log('Analyzed strengths:', strengths.length, strengths);
-    
     const developmentAreas = analyzeDevelopmentAreas(scores);
-    console.log('Analyzed development areas:', developmentAreas.length);
 
     const newStage = moveToNextStage ? Math.min(6, session.currentStage + 1) as CoachingStage : session.currentStage;
 
-    const updatedSession = {
+    setSession({
       ...session,
       currentStage: newStage,
       profile,
       strengths,
       developmentAreas,
-    };
-    console.log('Updating session to:', updatedSession);
-    
-    setSession(updatedSession);
+    });
   };
 
   const selectDevelopmentAreas = (areas: SubDimension[]) => {
@@ -84,6 +85,10 @@ export function CoachingProvider({ children }: { children: ReactNode }) {
       ...session,
       selectedDevelopmentAreas: areas,
     });
+  };
+
+  const setCoachAttitude = (attitude: CoachAttitude) => {
+    setCoachAttitudeState(attitude);
   };
 
   const nextStage = () => {
@@ -145,11 +150,13 @@ export function CoachingProvider({ children }: { children: ReactNode }) {
       value={{
         session,
         dimensionScores,
+        coachAttitude,
         startSession,
         updateScores,
         updateDimensionScore,
         validateDimensionScore,
         selectDevelopmentAreas,
+        setCoachAttitude,
         nextStage,
         previousStage,
         completeSession,

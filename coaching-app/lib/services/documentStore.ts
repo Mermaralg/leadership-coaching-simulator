@@ -2,31 +2,23 @@ import fs from 'fs';
 import path from 'path';
 import { SubDimension } from '@/types/coaching';
 
-// Document types matching our 4 PDFs
 export type DocumentType = 'strengths' | 'development' | 'actions' | 'cross-dimension';
-
-interface DocumentChunk {
-  content: string;
-  dimension?: SubDimension;
-  scoreRange?: 'low' | 'high';
-  type: DocumentType;
-}
 
 class DocumentStore {
   private documents: Map<DocumentType, string> = new Map();
-  private chunks: DocumentChunk[] = [];
 
   constructor() {
     this.loadDocuments();
-    this.createChunks();
   }
 
   private loadDocuments() {
     const dataDir = path.join(process.cwd(), 'lib/data');
-    
+
+    // Use markdown files for strengths and development (better structured)
+    // Use txt for actions and cross-dimension
     const fileMap: Record<DocumentType, string> = {
-      'strengths': 'Güçlü.txt',
-      'development': 'Gelişim.txt',
+      'strengths': 'Güçlü.md',
+      'development': 'Gelişim.md',
       'actions': 'Ne yapması gerek.txt',
       'cross-dimension': 'Boyut-Çapraz Yorum.txt',
     };
@@ -38,90 +30,11 @@ class DocumentStore {
           'utf-8'
         );
         this.documents.set(type as DocumentType, content);
+        console.log(`Loaded ${filename}: ${content.length} chars`);
       } catch (error) {
         console.error(`Failed to load ${filename}:`, error);
       }
     }
-  }
-
-  private createChunks() {
-    // For now, we'll create simple chunks by paragraph
-    // In a full implementation, we'd use embeddings
-    for (const [type, content] of this.documents.entries()) {
-      const paragraphs = content
-        .split('\n\n')
-        .filter(p => p.trim().length > 20); // Minimum length
-      
-      paragraphs.forEach(para => {
-        this.chunks.push({
-          content: para.trim(),
-          type,
-        });
-      });
-    }
-  }
-
-  /**
-   * Search for relevant content based on keywords
-   */
-  search(keywords: string[], type?: DocumentType, limit: number = 5): DocumentChunk[] {
-    let relevantChunks = this.chunks;
-
-    // Filter by document type if specified
-    if (type) {
-      relevantChunks = relevantChunks.filter(chunk => chunk.type === type);
-    }
-
-    // Score each chunk based on keyword matches
-    const scoredChunks = relevantChunks.map(chunk => {
-      const lowerContent = chunk.content.toLowerCase();
-      const score = keywords.reduce((acc, keyword) => {
-        const lowerKeyword = keyword.toLowerCase();
-        const matches = (lowerContent.match(new RegExp(lowerKeyword, 'g')) || []).length;
-        return acc + matches;
-      }, 0);
-
-      return { chunk, score };
-    });
-
-    // Sort by score and return top results
-    return scoredChunks
-      .filter(({ score }) => score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit)
-      .map(({ chunk }) => chunk);
-  }
-
-  /**
-   * Get content for a specific dimension and score range
-   */
-  getForDimension(
-    dimension: SubDimension,
-    scoreRange: 'low' | 'high',
-    type: DocumentType
-  ): string {
-    const dimensionLabels: Record<SubDimension, string[]> = {
-      duygu_kontrolu: ['duygu kontrolü', 'duygusal'],
-      stresle_basa_cikma: ['stres', 'başa çıkma'],
-      ozguven: ['özgüven', 'güven'],
-      risk_duyarlilik: ['risk'],
-      kontrolculuk: ['kontrol'],
-      kural_uyumu: ['kural'],
-      one_cikmayi_seven: ['öne çık'],
-      sosyallik: ['sosyal', 'ilişki'],
-      basari_yonelimi: ['başarı'],
-      iliski_yonetimi: ['ilişki yönetimi'],
-      iyi_gecinme: ['iyi geç', 'uyum'],
-      kacinma: ['kaçın', 'çatışma'],
-      yenilikcilik: ['yenilik'],
-      ogrenme_yonelimi: ['öğrenme'],
-      merak: ['merak'],
-    };
-
-    const keywords = dimensionLabels[dimension] || [dimension];
-    const results = this.search(keywords, type, 3);
-
-    return results.map(chunk => chunk.content).join('\n\n');
   }
 
   /**
@@ -132,46 +45,125 @@ class DocumentStore {
   }
 
   /**
+   * Extract content for specific dimensions based on scores
+   */
+  getContentForScores(
+    type: DocumentType,
+    scores: Record<SubDimension, number>
+  ): string {
+    const document = this.documents.get(type) || '';
+    if (!document) return '';
+
+    const dimensionMap: Record<SubDimension, string> = {
+      duygu_kontrolu: 'DUYGU KONTROLÜ',
+      stresle_basa_cikma: 'STRESLE BAŞA ÇIKMA',
+      ozguven: 'ÖZGÜVEN',
+      risk_duyarlilik: 'RİSK DUYARLILIK',
+      kontrolculuk: 'KONTROLCÜLÜK',
+      kural_uyumu: 'KURAL UYUMU',
+      one_cikmayi_seven: 'ÖNE ÇIKMAYI SEVEN',
+      sosyallik: 'SOSYALLİK',
+      basari_yonelimi: 'BAŞARI YÖNELİMİ',
+      iliski_yonetimi: 'İLİŞKİ YÖNETİMİ',
+      iyi_gecinme: 'İYİ GEÇİNME',
+      kacinma: 'KAÇINMA',
+      yenilikcilik: 'YENİLİKÇİLİK',
+      ogrenme_yonelimi: 'ÖĞRENME YÖNELİMİ',
+      merak: 'MERAK',
+    };
+
+    const results: string[] = [];
+
+    // Get extreme scores (0-20 or 80-100)
+    Object.entries(scores).forEach(([dim, score]) => {
+      if (score <= 20 || score >= 80) {
+        const dimensionName = dimensionMap[dim as SubDimension];
+        const scoreRange = score <= 50 ? 'Düşük Puan (0-50)' : 'Yüksek Puan (51-100)';
+
+        // Find the section for this dimension
+        const sectionRegex = new RegExp(
+          `## ${dimensionName}[\\s\\S]*?(?=## |$)`,
+          'i'
+        );
+        const match = document.match(sectionRegex);
+
+        if (match) {
+          // Extract just the relevant score range subsection
+          const subsectionRegex = new RegExp(
+            `### ${scoreRange}[\\s\\S]*?(?=### |## |$)`,
+            'i'
+          );
+          const subsectionMatch = match[0].match(subsectionRegex);
+
+          if (subsectionMatch) {
+            results.push(`\n**${dimensionName} (${score} puan - ${score <= 50 ? 'düşük' : 'yüksek'}):**\n${subsectionMatch[0]}`);
+          }
+        }
+      }
+    });
+
+    return results.join('\n');
+  }
+
+  /**
    * Get context for coaching conversation based on current stage
    */
   getContextForStage(stage: number, scores?: Record<SubDimension, number>): string {
     switch (stage) {
-      case 1: // Welcome
-        return 'You are introducing the 5D coaching process.';
-      
-      case 2: // Score collection
-        return 'You are collecting personality dimension scores from the participant.';
-      
+      case 1:
+        return '';
+
+      case 2:
+        return '';
+
       case 3: // Strengths
         if (!scores) return '';
-        // Get relevant strength content
-        const strengthKeywords = Object.entries(scores)
-          .filter(([_, score]) => score <= 30 || score >= 70)
-          .map(([dim]) => dim);
-        return this.search(strengthKeywords, 'strengths', 10)
-          .map(c => c.content)
-          .join('\n\n');
-      
+        const strengthsDoc = this.getDocument('strengths');
+        const strengthsForScores = this.getContentForScores('strengths', scores);
+        const crossDimStrengths = this.getDocument('cross-dimension');
+        return `
+=== GÜÇLÜ ÖZELLİKLER DOKÜMANI ===
+${strengthsDoc}
+
+=== KATILIMCININ UC PUANLARI ICIN GUCLU OZELLIKLER ===
+${strengthsForScores}
+
+=== CAPRAZ BOYUT ANALIZI ===
+${crossDimStrengths}
+`;
+
       case 4: // Development areas
         if (!scores) return '';
-        const devKeywords = Object.entries(scores)
-          .filter(([_, score]) => score <= 20 || score >= 80)
-          .map(([dim]) => dim);
-        return this.search(devKeywords, 'development', 10)
-          .map(c => c.content)
-          .join('\n\n');
-      
+        const devDoc = this.getDocument('development');
+        const devForScores = this.getContentForScores('development', scores);
+        const crossDimDev = this.getDocument('cross-dimension');
+        return `
+=== GELISIM ALANLARI DOKÜMANI ===
+${devDoc}
+
+=== KATILIMCININ UC PUANLARI ICIN GELISIM ALANLARI ===
+${devForScores}
+
+=== CAPRAZ BOYUT ANALIZI ===
+${crossDimDev}
+`;
+
       case 5: // Actions
-        return this.getDocument('actions');
-      
+        return `
+=== NE YAPMASI GEREK DOKÜMANI ===
+${this.getDocument('actions')}
+`;
+
       case 6: // Summary
-        return this.getDocument('cross-dimension');
-      
+        return `
+=== CAPRAZ BOYUT ANALIZI ===
+${this.getDocument('cross-dimension')}
+`;
+
       default:
         return '';
     }
   }
 }
 
-// Singleton instance
 export const documentStore = new DocumentStore();

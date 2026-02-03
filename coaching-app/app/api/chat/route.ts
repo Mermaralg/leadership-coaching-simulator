@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aiCoach, CoachingState } from '@/lib/services/aiCoach';
 import { responseValidator } from '@/lib/services/responseValidator';
+import { CoachAttitude, DEFAULT_ATTITUDE } from '@/lib/context/CoachingContext';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, state } = body as { message: string; state: CoachingState };
+    const { message, state, attitude } = body as {
+      message: string;
+      state: CoachingState;
+      attitude?: CoachAttitude;
+    };
 
     if (!message || !state) {
       return NextResponse.json(
@@ -14,8 +19,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate AI response
-    const { response, updatedState } = await aiCoach.generateResponse(state, message);
+    // Use provided attitude or default
+    const coachAttitude = attitude || DEFAULT_ATTITUDE;
+
+    // Generate AI response with attitude settings
+    const { response, updatedState } = await aiCoach.generateResponse(
+      state,
+      message,
+      coachAttitude
+    );
 
     // Validate response
     let validationResult;
