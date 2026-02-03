@@ -7,8 +7,8 @@ import ChatInterface from './ChatInterface';
 import { SubDimension } from '@/types/coaching';
 
 const STAGE_TITLES: Record<number, string> = {
-  3: 'Guclu Ozellikler',
-  4: 'Gelisim Alanlari',
+  3: 'Profil Analizi',
+  4: 'Gelisim Odagi',
   5: 'Eylem Plani',
   6: 'Ozet ve Kapanis',
 };

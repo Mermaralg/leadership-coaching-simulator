@@ -116,36 +116,42 @@ class DocumentStore {
       case 2:
         return '';
 
-      case 3: // Strengths
+      case 3: // Strengths - but show BOTH strengths AND growth for complete picture
         if (!scores) return '';
-        const strengthsDoc = this.getDocument('strengths');
-        const strengthsForScores = this.getContentForScores('strengths', scores);
-        const crossDimStrengths = this.getDocument('cross-dimension');
         return `
 === GÜÇLÜ ÖZELLİKLER DOKÜMANI ===
-${strengthsDoc}
+${this.getDocument('strengths')}
+
+=== GELISIM ALANLARI DOKÜMANI ===
+${this.getDocument('development')}
 
 === KATILIMCININ UC PUANLARI ICIN GUCLU OZELLIKLER ===
-${strengthsForScores}
-
-=== CAPRAZ BOYUT ANALIZI ===
-${crossDimStrengths}
-`;
-
-      case 4: // Development areas
-        if (!scores) return '';
-        const devDoc = this.getDocument('development');
-        const devForScores = this.getContentForScores('development', scores);
-        const crossDimDev = this.getDocument('cross-dimension');
-        return `
-=== GELISIM ALANLARI DOKÜMANI ===
-${devDoc}
+${this.getContentForScores('strengths', scores)}
 
 === KATILIMCININ UC PUANLARI ICIN GELISIM ALANLARI ===
-${devForScores}
+${this.getContentForScores('development', scores)}
 
 === CAPRAZ BOYUT ANALIZI ===
-${crossDimDev}
+${this.getDocument('cross-dimension')}
+`;
+
+      case 4: // Development - also show BOTH for context
+        if (!scores) return '';
+        return `
+=== GÜÇLÜ ÖZELLİKLER DOKÜMANI ===
+${this.getDocument('strengths')}
+
+=== GELISIM ALANLARI DOKÜMANI ===
+${this.getDocument('development')}
+
+=== KATILIMCININ UC PUANLARI ICIN GUCLU OZELLIKLER ===
+${this.getContentForScores('strengths', scores)}
+
+=== KATILIMCININ UC PUANLARI ICIN GELISIM ALANLARI ===
+${this.getContentForScores('development', scores)}
+
+=== CAPRAZ BOYUT ANALIZI ===
+${this.getDocument('cross-dimension')}
 `;
 
       case 5: // Actions
