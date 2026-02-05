@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { aiCoach, CoachingState } from '@/lib/services/aiCoach';
 import { responseValidator } from '@/lib/services/responseValidator';
 import { CoachAttitude, DEFAULT_ATTITUDE } from '@/lib/context/CoachingContext';
+import {
+  shouldTransitionStage,
+  extractAITransitionHint,
+  cleanAIResponse,
+} from '@/lib/services/stageManager';
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,17 +60,29 @@ export async function POST(request: NextRequest) {
       console.warn('Response validation warnings:', validationResult.warnings);
     }
 
-    // Check for stage transitions
-    const stageTransitionMatch = response.match(/STAGE_TRANSITION:(\d+)/);
-    if (stageTransitionMatch) {
-      const newStage = parseInt(stageTransitionMatch[1]);
-      updatedState.stage = newStage as CoachingState['stage'];
+    // CODE-DRIVEN STAGE TRANSITIONS (primary mechanism)
+    // Use deterministic logic to decide when to transition stages
+    const transitionResult = shouldTransitionStage(
+      updatedState,
+      message,
+      response
+    );
+
+    if (transitionResult.shouldTransition && transitionResult.nextStage) {
+      console.log(`Stage transition: ${updatedState.stage} → ${transitionResult.nextStage} (${transitionResult.reason})`);
+      updatedState.stage = transitionResult.nextStage;
+    } else {
+      // FALLBACK: Check for AI's transition hint (secondary mechanism)
+      // Only use if code-driven logic didn't trigger a transition
+      const aiHint = extractAITransitionHint(response);
+      if (aiHint && aiHint > updatedState.stage && aiHint <= 6) {
+        console.log(`Stage transition via AI hint: ${updatedState.stage} → ${aiHint}`);
+        updatedState.stage = aiHint as CoachingState['stage'];
+      }
     }
 
     // Clean up markers from response
-    const cleanResponse = response
-      .replace(/STAGE_TRANSITION:\d+/, '')
-      .trim();
+    const cleanResponse = cleanAIResponse(response);
 
     return NextResponse.json({
       response: cleanResponse,

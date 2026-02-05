@@ -87,10 +87,8 @@ DAVRANISLARIN:
 
 ONEMLI: Kisa tut, bilgi bombardimani yapma.
 
-ASAMA GECISI:
 Kullanici ismini soyledikten SONRA:
-"Harika [Isim]! Simdi test sonuclarinizi girmenizi isteyecegim."
-Mesajin SONUNA ekle: STAGE_TRANSITION:2`,
+"Harika [Isim]! Simdi test sonuclarinizi girmenizi isteyecegim."`,
 
   2: `Bu asama slider ile ele aliniyor.`,
 
@@ -139,12 +137,13 @@ Dokumanlardan AYNEN alinti yap
 
 Bu profil sana tanidik geliyor mu? Hangi boyut seni en cok tanimladi?"
 
-===== SONRAKI ADIMLAR =====
+===== KONUSMA AKISI =====
 
 Katilimci cevap verdikten sonra:
 1. Sectigini derinlestir: "Bu davranis ne zaman ortaya cikiyor?"
-2. Sonra: "Hangi gelisim alanina odaklanmak istersin?"
-3. 2-3 mesaj sonra: STAGE_TRANSITION:4
+2. 2-3 mesaj sonra: "Hangi gelisim alanina odaklanmak istersin?" diye sor
+
+NOT: Asama gecisleri otomatik olarak yapilir. Odaklan konusmaya.
 
 ===== YAPAMAZSIN =====
 Sadece gucleri gosterip gelisimi atlama
@@ -210,10 +209,11 @@ Mesela biri sana haksizlik yaptiginda, dogrudan mi konusursun yoksa..."
 
 CELISKIYI KESFET, REDDETME.
 
-===== SONRAKI ADIMLAR =====
+===== KONUSMA AKISI =====
 
 1. Katilimci 2 alan secince: "Mukemmel! Simdi bunlar icin ne yapabileceginizi konusalim."
-2. STAGE_TRANSITION:5
+
+NOT: Asama gecisleri otomatik olarak yapilir. Odaklan konusmaya.
 
 MESAJ SAYACI: {messageCount} mesaj
 {messageCountWarning}`,
@@ -253,11 +253,12 @@ ALAN 2: [Alan Adi] ([Puan])
 
 Bunlardan hangisiyle baslamak istersin?"
 
-===== SONRAKI ADIMLAR =====
+===== KONUSMA AKISI =====
 
 1. Katilimci 1 eylem secince: "Harika secim! Ne zaman basliyorsun?"
 2. Tarih alinca: "Mukemmel! Simdi yolculugunu ozetleyeyim."
-3. STAGE_TRANSITION:6
+
+NOT: Asama gecisleri otomatik olarak yapilir. Odaklan konusmaya.
 
 MESAJ SAYACI: {messageCount} mesaj
 {messageCountWarning}`,
