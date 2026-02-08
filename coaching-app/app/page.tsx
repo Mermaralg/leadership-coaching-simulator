@@ -54,6 +54,7 @@ export default function Home() {
           {/* Footer */}
           <div className="mt-8 text-center text-sm text-gray-500">
             <p>2026 5D Kisilik Kocluk Simulatoru - MVP Demo</p>
+            <p className="text-xs text-gray-400 mt-1">v0.1.0</p>
           </div>
         </div>
       </div>
