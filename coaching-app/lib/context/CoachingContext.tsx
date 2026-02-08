@@ -5,6 +5,7 @@ import {
   CoachingSession,
   CoachingStage,
   SubDimension,
+  MainDimension,
   PersonalityProfile,
 } from '@/types/coaching';
 import { analyzeStrengths, analyzeDevelopmentAreas } from '../utils/scoring';
@@ -28,7 +29,7 @@ interface CoachingContextType {
   dimensionScores: DimensionScores;
   coachAttitude: CoachAttitude;
   startSession: (name: string) => void;
-  updateScores: (scores: Record<SubDimension, number>, moveToNextStage?: boolean) => void;
+  updateScores: (scores: Record<SubDimension, number>, mainScores?: Record<MainDimension, number>, moveToNextStage?: boolean) => void;
   updateDimensionScore: (dimension: SubDimension, score: number, proposal?: ScoreProposal) => void;
   validateDimensionScore: (dimension: SubDimension) => void;
   selectDevelopmentAreas: (areas: SubDimension[]) => void;
@@ -56,12 +57,17 @@ export function CoachingProvider({ children }: { children: ReactNode }) {
     setDimensionScores({});
   };
 
-  const updateScores = (scores: Record<SubDimension, number>, moveToNextStage = false) => {
+  const updateScores = (
+    scores: Record<SubDimension, number>,
+    mainScores?: Record<MainDimension, number>,
+    moveToNextStage = false
+  ) => {
     if (!session) return;
 
     const profile: PersonalityProfile = {
       participantName: session.participantName,
       scores,
+      mainDimensionScores: mainScores,
       createdAt: new Date(),
     };
 

@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useCoaching } from '@/lib/context/CoachingContext';
-import { DIMENSIONS, SubDimension } from '@/types/coaching';
+import { DIMENSIONS, SubDimension, MainDimension } from '@/types/coaching';
 
-// Get initial scores with all dimensions set to 50
-function getInitialScores(): Record<SubDimension, number> {
+// Get initial sub-dimension scores (all set to 50)
+function getInitialSubScores(): Record<SubDimension, number> {
   const scores: Record<SubDimension, number> = {} as Record<SubDimension, number>;
   Object.values(DIMENSIONS).flatMap((d) => d.subDimensions).forEach((dim) => {
     scores[dim.key] = 50;
@@ -13,25 +13,40 @@ function getInitialScores(): Record<SubDimension, number> {
   return scores;
 }
 
+// Get initial main dimension scores (all set to 50)
+function getInitialMainScores(): Record<MainDimension, number> {
+  const scores: Record<MainDimension, number> = {} as Record<MainDimension, number>;
+  (Object.keys(DIMENSIONS) as MainDimension[]).forEach((key) => {
+    scores[key] = 50;
+  });
+  return scores;
+}
+
 export default function Stage2Scores() {
   const { updateScores, previousStage } = useCoaching();
   
-  // Group dimensions by main dimension for spreadsheet display
-  const dimensionGroups = Object.values(DIMENSIONS).map((d) => ({
-    mainName: d.name,
-    subDimensions: d.subDimensions,
-  }));
+  // Dimension data with keys
+  const dimensionEntries = (Object.entries(DIMENSIONS) as [MainDimension, typeof DIMENSIONS[MainDimension]][]);
 
-  const [scores, setScores] = useState<Record<SubDimension, number>>(getInitialScores);
+  const [subScores, setSubScores] = useState<Record<SubDimension, number>>(getInitialSubScores);
+  const [mainScores, setMainScores] = useState<Record<MainDimension, number>>(getInitialMainScores);
 
-  const handleScoreChange = (dimension: SubDimension, value: string) => {
+  const handleSubScoreChange = (dimension: SubDimension, value: string) => {
     const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
-    setScores((prev) => ({ ...prev, [dimension]: numValue }));
+    setSubScores((prev) => ({ ...prev, [dimension]: numValue }));
+  };
+
+  const handleMainScoreChange = (dimension: MainDimension, value: string) => {
+    const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
+    setMainScores((prev) => ({ ...prev, [dimension]: numValue }));
   };
 
   const handleSubmit = () => {
-    updateScores(scores, true);
+    updateScores(subScores, mainScores, true);
   };
+
+  // CSS class to hide number input spinners
+  const inputClass = "w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
   return (
     <div>
@@ -48,37 +63,52 @@ export default function Stage2Scores() {
           <thead>
             <tr className="bg-gray-100">
               <th className="text-left px-4 py-2 text-sm font-semibold text-gray-700 border-b">Ana Boyut</th>
+              <th className="text-center px-4 py-2 text-sm font-semibold text-gray-700 border-b w-20">Puan</th>
               <th className="text-left px-4 py-2 text-sm font-semibold text-gray-700 border-b">Alt Boyut</th>
-              <th className="text-center px-4 py-2 text-sm font-semibold text-gray-700 border-b w-24">Puan</th>
+              <th className="text-center px-4 py-2 text-sm font-semibold text-gray-700 border-b w-20">Puan</th>
             </tr>
           </thead>
           <tbody>
-            {dimensionGroups.map((group, groupIdx) => (
-              group.subDimensions.map((dim, dimIdx) => (
+            {dimensionEntries.map(([mainKey, mainDim], groupIdx) => (
+              mainDim.subDimensions.map((subDim, dimIdx) => (
                 <tr 
-                  key={dim.key} 
+                  key={subDim.key} 
                   className={`${groupIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors`}
                 >
                   {dimIdx === 0 && (
-                    <td 
-                      className="px-4 py-2 text-sm font-medium text-gray-700 border-b align-top"
-                      rowSpan={group.subDimensions.length}
-                    >
-                      {group.mainName}
-                    </td>
+                    <>
+                      <td 
+                        className="px-4 py-2 text-sm font-medium text-gray-700 border-b align-middle"
+                        rowSpan={mainDim.subDimensions.length}
+                      >
+                        {mainDim.name}
+                      </td>
+                      <td 
+                        className="px-2 py-1 border-b align-middle"
+                        rowSpan={mainDim.subDimensions.length}
+                      >
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={mainScores[mainKey]}
+                          onChange={(e) => handleMainScoreChange(mainKey, e.target.value)}
+                          className={`${inputClass} font-medium`}
+                        />
+                      </td>
+                    </>
                   )}
                   <td className="px-4 py-2 text-sm text-gray-600 border-b">
-                    {dim.name}
+                    {subDim.name}
                   </td>
                   <td className="px-2 py-1 border-b">
                     <input
                       type="number"
                       min="0"
                       max="100"
-                      value={scores[dim.key]}
-                      onChange={(e) => handleScoreChange(dim.key, e.target.value)}
-                      className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                      placeholder="0-100"
+                      value={subScores[subDim.key]}
+                      onChange={(e) => handleSubScoreChange(subDim.key, e.target.value)}
+                      className={inputClass}
                     />
                   </td>
                 </tr>
