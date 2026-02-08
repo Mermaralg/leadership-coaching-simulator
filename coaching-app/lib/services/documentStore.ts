@@ -115,18 +115,21 @@ class DocumentStore {
 
       case 2:
         return '';
-
-      case 3: // Strengths - but show BOTH strengths AND growth for complete picture
+      case 3: // Strengths ONLY
         if (!scores) return '';
         return `
-=== GÜÇLÜ ÖZELLİKLER DOKÜMANI ===
+=== GÜCLÜ ÖZELLİKLER DOKÜMANI ===
 ${this.getDocument('strengths')}
-
-=== GELISIM ALANLARI DOKÜMANI ===
-${this.getDocument('development')}
 
 === KATILIMCININ UC PUANLARI ICIN GUCLU OZELLIKLER ===
 ${this.getContentForScores('strengths', scores)}
+`;
+
+      case 4: // Development ONLY
+        if (!scores) return '';
+        return `
+=== GELISIM ALANLARI DOKÜMANI ===
+${this.getDocument('development')}
 
 === KATILIMCININ UC PUANLARI ICIN GELISIM ALANLARI ===
 ${this.getContentForScores('development', scores)}
@@ -135,26 +138,7 @@ ${this.getContentForScores('development', scores)}
 ${this.getDocument('cross-dimension')}
 `;
 
-      case 4: // Development - also show BOTH for context
-        if (!scores) return '';
-        return `
-=== GÜÇLÜ ÖZELLİKLER DOKÜMANI ===
-${this.getDocument('strengths')}
-
-=== GELISIM ALANLARI DOKÜMANI ===
-${this.getDocument('development')}
-
-=== KATILIMCININ UC PUANLARI ICIN GUCLU OZELLIKLER ===
-${this.getContentForScores('strengths', scores)}
-
-=== KATILIMCININ UC PUANLARI ICIN GELISIM ALANLARI ===
-${this.getContentForScores('development', scores)}
-
-=== CAPRAZ BOYUT ANALIZI ===
-${this.getDocument('cross-dimension')}
-`;
-
-      case 5: // Actions
+      case 5:
         return `
 === NE YAPMASI GEREK DOKÜMANI ===
 ${this.getDocument('actions')}
