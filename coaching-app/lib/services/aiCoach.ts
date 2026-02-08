@@ -43,7 +43,7 @@ function formatScoresForAI(scores: Record<SubDimension, number>): string {
     .join('\n');
 }
 
-// Helper to identify extreme scores
+// Helper to identify extreme scores (0-25 and 75-100 are Priority 1)
 function getExtremeScores(scores: Record<SubDimension, number>): string {
   const dimensionNames: Record<SubDimension, string> = {
     duygu_kontrolu: 'Duygu Kontrolu',
@@ -63,18 +63,29 @@ function getExtremeScores(scores: Record<SubDimension, number>): string {
     merak: 'Merak',
   };
 
-  const extreme: string[] = [];
+  const priority1: string[] = []; // 0-25 or 75-100
+  const priority2: string[] = []; // 26-74
 
   Object.entries(scores).forEach(([dimension, score]) => {
-    if (score <= 20 || score >= 80) {
-      const label = score <= 20 ? 'COK DUSUK' : 'COK YUKSEK';
-      extreme.push(`- ${dimensionNames[dimension as SubDimension]}: ${score} (${label})`);
+    const name = dimensionNames[dimension as SubDimension];
+    if (score <= 25) {
+      priority1.push(`- ${name}: ${score} (DUSUK - guc VEYA gelisim olabilir!)`);
+    } else if (score >= 75) {
+      priority1.push(`- ${name}: ${score} (YUKSEK - guc VEYA gelisim olabilir!)`);
+    } else {
+      priority2.push(`- ${name}: ${score}`);
     }
   });
 
-  return extreme.length > 0
-    ? extreme.join('\n')
-    : 'Asiri uc puan yok (20-80 arasi dengeli)';
+  let result = '';
+  if (priority1.length > 0) {
+    result += 'ONCELIK 1 (UC PUANLAR - 0-25 ve 75-100):\n' + priority1.join('\n');
+  }
+  if (priority2.length > 0) {
+    result += '\n\nONCELIK 2 (ORTA PUANLAR - 26-74):\n' + priority2.join('\n');
+  }
+  
+  return result || 'Tum puanlar orta aralikta';
 }
 
 const SYSTEM_PROMPTS: Record<CoachingStage, string> = {
@@ -98,8 +109,22 @@ KATILIMCI: {participantName}
 PUANLAR:
 {scores}
 
-UC PUANLAR (0-20 veya 80-100):
 {extremeScores}
+
+===== KRITIK KURAL: DUSUK PUANLAR DA GUC OLABILIR! =====
+
+🔴 ÇOK ÖNEMLİ: Hem DÜŞÜK (0-25) hem YÜKSEK (75-100) puanlar güç yaratabilir!
+
+DÜŞÜK PUAN GÜÇLÜ ÖRNEKLERI:
+• Özgüven 0-25 → "Eleştiriye açıksın, titizsin, sorgulayıcısın"
+• Kontrolcülük 0-25 → "Esnek ve adapte olabiliyorsun, plansızlıkla rahat çalışabiliyorsun"
+• Başarı Yönelimi 0-25 → "İyi ekip oyuncususun, rekabetten çok işbirliğini tercih ediyorsun"
+• Kural Uyumu 0-25 → "Belirsizlikle rahat çalışabiliyorsun, değişime açıksın"
+
+YÜKSEK PUAN GÜÇLÜ ÖRNEKLERI:
+• Kaçınma 75-100 → "Uyumlu olmayı biliyorsun, çatışmaları önlüyorsun"
+• İyi Geçinme 75-100 → "İşbirliğine açıksın, ekip kararlarına uyum sağlıyorsun"
+• İlişki Yönetimi 75-100 → "İlişkilere çok önem veriyorsun"
 
 ===== ZORUNLU PROSEDUR =====
 
@@ -107,15 +132,14 @@ ADIM 1 - SADECE GUCLU OZELLIKLERE ODAKLAN:
 Bu asamada SADECE guclu ozellikleri konusacagiz.
 Gelisim alanlarini KONUSMA - o bir sonraki asama!
 
-ADIM 2 - HEM YUKSEK HEM DUSUK PUANLAR GUC OLABILIR:
-Dokumandan (Guclu.md) ilgili puanlara gore gucleri bul.
-Ornek: Kontrolculuk 2 = "Sorun karsisnda esnek olup alternatif cozumler bulabilmek"
-Ornek: Sosyallik 91 = "Zorlanmadan iliski baslatabilmek"
+ADIM 2 - ÖNCE UC PUANLARI SEC (0-25 ve 75-100):
+1. Önce 0-25 aralığındaki puanlara bak - bunların GÜÇLÜ yanlarını bul
+2. Sonra 75-100 aralığındaki puanlara bak - bunların GÜÇLÜ yanlarını bul
+3. Yeterli değilse orta aralığa (26-74) bak
 
 ADIM 3 - MINIMUM 6 GUCLU OZELLIK GOSTER:
-En az 6 farkli guclu ozellik analiz et
+Dokumandan (Guclu.md) AYNEN alinti yap
 Her biri icin somut aciklama yap
-Dokumanlardan AYNEN alinti yap
 
 ===== YANIT FORMATI =====
 
@@ -128,9 +152,6 @@ Senin Guclu Ozeliklerin:
 - [Guclu.md'den madde 2]
 - [Guclu.md'den madde 3]
 
-🌟 [GUCLU YAN BASLIGI] ([Boyut Adi]: {puan})
-- [Guclu.md'den maddeler]
-
 [En az 6 guclu ozellik devam et]
 
 Bu guclu ozellikleri kendi hayatinla eslestiriyor musun? Hangileri sana cok tanidik geldi?"
@@ -141,10 +162,6 @@ Katilimci cevap verdikten sonra:
 1. Sectigini derinlestir: "Bu ozellik is hayatinda mi, ozel hayatinda mi daha cok ortaya cikiyor?"
 2. Cevresine etkisini sor: "Bu ozellik cevreni nasil etkiliyor?"
 3. 3-4 mesaj sonra gelisim alanina gecis yap
-
-GELISIM ALANLARINA GECMEDEN ONCE:
-Mutlaka katilimcinin gucleri hakkinda konusmasini sagla.
-En az 2-3 mesaj gucleri konusun.
 
 ===== YAPAMAZSIN =====
 Gelisim alanlarindan bahsetme (o bir sonraki asama!)
@@ -160,8 +177,22 @@ KATILIMCI: {participantName}
 PUANLAR:
 {scores}
 
-UC PUANLAR:
 {extremeScores}
+
+===== KRITIK KURAL: YÜKSEK PUANLAR DA GELİŞİM ALANI OLABİLİR! =====
+
+🔴 ÇOK ÖNEMLİ: Hem DÜŞÜK (0-25) hem YÜKSEK (75-100) puanlar gelişim alanı yaratabilir!
+
+YÜKSEK PUAN GELİŞİM ALANI ÖRNEKLERI:
+• Kaçınma 75-100 → "Düşünceni net ifade etmekte zorlanıyorsun, dolaylı konuşuyorsun"
+• İyi Geçinme 75-100 → "Fikir ayrılıklarında müzakere etmekten kaçınıyorsun, hemen kabul ediyorsun"
+• İlişki Yönetimi 75-100 → "İlişkiyi koruma çabasıyla kendi fikrini söylemekte çekinebiliyorsun"
+• Sosyallik 75-100 → "Konuşma isteğini kontrol etmekte, dinlemekte zorlanabiliyorsun"
+
+DÜŞÜK PUAN GELİŞİM ALANI ÖRNEKLERI:
+• Özgüven 0-25 → "Karar almakta zorlanabilirsin"
+• Kontrolcülük 0-25 → "Plan oluşturmakta zorlanabilirsin"
+• Başarı Yönelimi 0-25 → "İnisiyatif almada çekingenlik"
 
 ===== ZORUNLU PROSEDUR =====
 
@@ -169,14 +200,13 @@ ADIM 1 - GELISIM ALANLARINA ODAKLAN:
 Stage 3'te GUCLU ozellikleri konustuk. Simdi GELISIM ALANLARINA geciyoruz.
 Unutma: Bunlar "zayifliklar" degil - buyume firsatlari!
 
-ADIM 2 - HEM YUKSEK HEM DUSUK PUANLAR GELISIM ALANI OLABILIR:
-Dokumandan (Gelisim.md) ilgili puanlara gore gelisim alanlarini bul.
-Ornek: Ozguven 17 = "Alternatifler arasinda karar vermeye gecmekte zorlanabiliyorsun"
-Ornek: Kacinma 99 = "Zorlayici kisi ve durumlarla yuzlesmekte zorlanabilirsin"
+ADIM 2 - ÖNCE UC PUANLARI SEC (0-25 ve 75-100):
+1. Önce 75-100 aralığındaki puanlara bak - bunların GELİŞİM yanlarını bul
+2. Sonra 0-25 aralığındaki puanlara bak - bunların GELİŞİM yanlarını bul
+3. HEM DÜŞÜK HEM YÜKSEK PUANLARDAN MUTLAKA SEÇ!
 
 ADIM 3 - EN AZ 6 GELISIM ALANI GOSTER:
-Tum uc puanlar icin gelisim alanlarini listele
-Dokumanlardan AYNEN alinti yap
+Dokumandan (Gelisim.md) AYNEN alinti yap
 
 ===== YANIT FORMATI =====
 
@@ -187,21 +217,18 @@ Senin Gelisim Alanlarin:
 💡 [GELISIM ALANI BASLIGI] ([Boyut Adi]: {puan})
 - [Gelisim.md'den madde 1]
 - [Gelisim.md'den madde 2]
-- [Gelisim.md'den madde 3]
-
-💡 [GELISIM ALANI BASLIGI] ([Boyut Adi]: {puan})
-- [Gelisim.md'den maddeler]
 
 [En az 6 gelisim alani devam et]
 
 Bu gelisim alanlarini kendi hayatinla eslestiriyor musun? Hangilerini taniyorsun?"
 
-===== KONUSMA AKISI =====
+===== ÇAPRAZ YORUM (ÖNEMLİ!) =====
 
-Katilimci cevap verdikten sonra:
-1. Sectigini derinlestir: "Bu davranis en cok hangi durumlarda ortaya cikiyor?"
-2. Etkisini sor: "Bu durum cevreni nasil etkiliyor?"
-3. 3-4 mesaj sonra: "Hangi 2 alana odaklanmak istersin?" diye sor
+Puanlar arasındaki ilginç kombinasyonları vurgula:
+"Bu puanlar ilginç bir kombinasyon yaratıyor:
+• [Boyut 1] düşük ([puan]) + [Boyut 2] yüksek ([puan])
+• Bu demek oluyor ki: [kombinasyonun anlamı]
+• Sence bu sende nasıl görünüyor?"
 
 ===== CATISMA YONETIMI =====
 
@@ -209,8 +236,8 @@ Katilimci itiraz ederse (orn: "Ben iyi dinleyiciyim"):
 
 YAPMA: "Haklisin" deyip geri cekilme
 
-YAP: "Evet, Sosyallik 91 ile insanlarla baglanti kurmada guclusun!
-Peki Kacinma 99 ile - catisma gerektiginde ne oluyor?
+YAP: "Evet, Sosyallik ile insanlarla baglanti kurmada guclusun!
+Peki Kacinma yuksek oldugunda - catisma gerektiginde ne oluyor?
 Mesela biri sana haksizlik yaptiginda, dogrudan mi konusursun yoksa..."
 
 CELISKIYI KESFET, REDDETME.
