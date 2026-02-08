@@ -132,14 +132,20 @@ ADIM 1 - SADECE GUCLU OZELLIKLERE ODAKLAN:
 Bu asamada SADECE guclu ozellikleri konusacagiz.
 Gelisim alanlarini KONUSMA - o bir sonraki asama!
 
-ADIM 2 - ÖNCE UC PUANLARI SEC (0-25 ve 75-100):
-1. Önce 0-25 aralığındaki puanlara bak - bunların GÜÇLÜ yanlarını bul
-2. Sonra 75-100 aralığındaki puanlara bak - bunların GÜÇLÜ yanlarını bul
-3. Yeterli değilse orta aralığa (26-74) bak
+ADIM 2 - HEM DUSUK HEM YUKSEK PUANLARDAN SEC (ZORUNLU!):
+🔴 ZORUNLU: Listende HEM düşük (0-25) HEM yüksek (75-100) puanlardan özellik OLMALI!
+🔴 SADECE yüksek puanlardan seçersen HATALI olur!
+
+Örnek doğru liste:
+- Özgüven: 17 (DÜŞÜK) → "Eleştiriye açıksın, titizsin"
+- Sosyallik: 91 (YÜKSEK) → "Zorlanmadan ilişki başlatabilirsin"
+- Başarı Yönelimi: 5 (DÜŞÜK) → "İyi ekip oyuncususun"
+- Kaçınma: 99 (YÜKSEK) → "Uyumlu olmayı biliyorsun"
 
 ADIM 3 - MINIMUM 6 GUCLU OZELLIK GOSTER:
-Dokumandan (Guclu.md) AYNEN alinti yap
-Her biri icin somut aciklama yap
+- En az 3 tanesi DÜŞÜK puanlardan (0-25)
+- En az 3 tanesi YÜKSEK puanlardan (75-100)
+- Dokumandan (Guclu.md) AYNEN alinti yap
 
 ===== YANIT FORMATI =====
 
@@ -164,9 +170,10 @@ Katilimci cevap verdikten sonra:
 3. 3-4 mesaj sonra gelisim alanina gecis yap
 
 ===== YAPAMAZSIN =====
-Gelisim alanlarindan bahsetme (o bir sonraki asama!)
-6'dan az guclu ozellik gosterme
-Dokumandan farkli icerik uretme
+🚫 SADECE yüksek puanlardan güçlü özellik gösterme - DÜŞÜK puanlar da GÜÇ olabilir!
+🚫 Gelisim alanlarindan bahsetme (o bir sonraki asama!)
+🚫 6'dan az guclu ozellik gosterme
+🚫 Dokumandan farkli icerik uretme
 
 MESAJ SAYACI: {messageCount} mesaj
 {messageCountWarning}`,
@@ -200,13 +207,20 @@ ADIM 1 - GELISIM ALANLARINA ODAKLAN:
 Stage 3'te GUCLU ozellikleri konustuk. Simdi GELISIM ALANLARINA geciyoruz.
 Unutma: Bunlar "zayifliklar" degil - buyume firsatlari!
 
-ADIM 2 - ÖNCE UC PUANLARI SEC (0-25 ve 75-100):
-1. Önce 75-100 aralığındaki puanlara bak - bunların GELİŞİM yanlarını bul
-2. Sonra 0-25 aralığındaki puanlara bak - bunların GELİŞİM yanlarını bul
-3. HEM DÜŞÜK HEM YÜKSEK PUANLARDAN MUTLAKA SEÇ!
+ADIM 2 - HEM DUSUK HEM YUKSEK PUANLARDAN SEC (ZORUNLU!):
+🔴 ZORUNLU: Listende HEM düşük (0-25) HEM yüksek (75-100) puanlardan gelişim alanı OLMALI!
+🔴 SADECE yüksek puanlardan seçersen HATALI olur!
+
+Örnek doğru liste:
+- Kaçınma: 99 (YÜKSEK) → "Düşünceni net ifade etmekte zorlanıyorsun"
+- Özgüven: 17 (DÜŞÜK) → "Karar almakta zorlanabilirsin"
+- İyi Geçinme: 99 (YÜKSEK) → "Müzakere etmekten kaçınıyorsun"
+- Kontrolcülük: 10 (DÜŞÜK) → "Plan oluşturmakta zorlanabilirsin"
 
 ADIM 3 - EN AZ 6 GELISIM ALANI GOSTER:
-Dokumandan (Gelisim.md) AYNEN alinti yap
+- En az 3 tanesi YÜKSEK puanlardan (75-100)
+- En az 3 tanesi DÜŞÜK puanlardan (0-25)
+- Dokumandan (Gelisim.md) AYNEN alinti yap
 
 ===== YANIT FORMATI =====
 

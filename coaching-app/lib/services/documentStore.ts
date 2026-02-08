@@ -74,9 +74,10 @@ class DocumentStore {
 
     const results: string[] = [];
 
-    // Get extreme scores (0-20 or 80-100)
+    // Get extreme scores (0-25 or 75-100) - Priority 1
+    // Both LOW and HIGH extreme scores can be strengths OR development areas!
     Object.entries(scores).forEach(([dim, score]) => {
-      if (score <= 20 || score >= 80) {
+      if (score <= 25 || score >= 75) {
         const dimensionName = dimensionMap[dim as SubDimension];
         const scoreRange = score <= 50 ? 'Düşük Puan (0-50)' : 'Yüksek Puan (51-100)';
 
