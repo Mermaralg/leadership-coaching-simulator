@@ -4,20 +4,20 @@ import { useState } from 'react';
 import { useCoaching } from '@/lib/context/CoachingContext';
 import { DIMENSIONS, SubDimension, MainDimension } from '@/types/coaching';
 
-// Get initial sub-dimension scores (all set to 50)
-function getInitialSubScores(): Record<SubDimension, number> {
-  const scores: Record<SubDimension, number> = {} as Record<SubDimension, number>;
+// Get initial sub-dimension scores (all empty)
+function getInitialSubScores(): Record<SubDimension, number | ''> {
+  const scores: Record<SubDimension, number | ''> = {} as Record<SubDimension, number | ''>;
   Object.values(DIMENSIONS).flatMap((d) => d.subDimensions).forEach((dim) => {
-    scores[dim.key] = 50;
+    scores[dim.key] = '';
   });
   return scores;
 }
 
-// Get initial main dimension scores (all set to 50)
-function getInitialMainScores(): Record<MainDimension, number> {
-  const scores: Record<MainDimension, number> = {} as Record<MainDimension, number>;
+// Get initial main dimension scores (all empty)
+function getInitialMainScores(): Record<MainDimension, number | ''> {
+  const scores: Record<MainDimension, number | ''> = {} as Record<MainDimension, number | ''>;
   (Object.keys(DIMENSIONS) as MainDimension[]).forEach((key) => {
-    scores[key] = 50;
+    scores[key] = '';
   });
   return scores;
 }
@@ -28,21 +28,40 @@ export default function Stage2Scores() {
   // Dimension data with keys
   const dimensionEntries = (Object.entries(DIMENSIONS) as [MainDimension, typeof DIMENSIONS[MainDimension]][]);
 
-  const [subScores, setSubScores] = useState<Record<SubDimension, number>>(getInitialSubScores);
-  const [mainScores, setMainScores] = useState<Record<MainDimension, number>>(getInitialMainScores);
+  const [subScores, setSubScores] = useState<Record<SubDimension, number | ''>>(getInitialSubScores);
+  const [mainScores, setMainScores] = useState<Record<MainDimension, number | ''>>(getInitialMainScores);
 
   const handleSubScoreChange = (dimension: SubDimension, value: string) => {
-    const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
-    setSubScores((prev) => ({ ...prev, [dimension]: numValue }));
+    if (value === '') {
+      setSubScores((prev) => ({ ...prev, [dimension]: '' }));
+    } else {
+      const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
+      setSubScores((prev) => ({ ...prev, [dimension]: numValue }));
+    }
   };
 
   const handleMainScoreChange = (dimension: MainDimension, value: string) => {
-    const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
-    setMainScores((prev) => ({ ...prev, [dimension]: numValue }));
+    if (value === '') {
+      setMainScores((prev) => ({ ...prev, [dimension]: '' }));
+    } else {
+      const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
+      setMainScores((prev) => ({ ...prev, [dimension]: numValue }));
+    }
   };
 
   const handleSubmit = () => {
-    updateScores(subScores, mainScores, true);
+    // Convert empty strings to 50 (default) before submitting
+    const processedSubScores: Record<SubDimension, number> = {} as Record<SubDimension, number>;
+    Object.entries(subScores).forEach(([key, value]) => {
+      processedSubScores[key as SubDimension] = value === '' ? 50 : value;
+    });
+
+    const processedMainScores: Record<MainDimension, number> = {} as Record<MainDimension, number>;
+    Object.entries(mainScores).forEach(([key, value]) => {
+      processedMainScores[key as MainDimension] = value === '' ? 50 : value;
+    });
+
+    updateScores(processedSubScores, processedMainScores, true);
   };
 
   // CSS class to hide number input spinners
@@ -94,6 +113,7 @@ export default function Stage2Scores() {
                           value={mainScores[mainKey]}
                           onChange={(e) => handleMainScoreChange(mainKey, e.target.value)}
                           className={`${inputClass} font-medium`}
+                          placeholder="50"
                         />
                       </td>
                     </>
@@ -109,6 +129,7 @@ export default function Stage2Scores() {
                       value={subScores[subDim.key]}
                       onChange={(e) => handleSubScoreChange(subDim.key, e.target.value)}
                       className={inputClass}
+                      placeholder="50"
                     />
                   </td>
                 </tr>
