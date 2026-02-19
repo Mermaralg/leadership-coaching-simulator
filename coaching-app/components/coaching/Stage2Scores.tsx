@@ -32,23 +32,28 @@ export default function Stage2Scores() {
   const [mainScores, setMainScores] = useState<Record<MainDimension, number | ''>>(getInitialMainScores);
 
   const handleSubScoreChange = (dimension: SubDimension, value: string) => {
-    if (value === '') {
-      setSubScores((prev) => ({ ...prev, [dimension]: '' }));
-    } else {
-      const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
-      setSubScores((prev) => ({ ...prev, [dimension]: numValue }));
-    }
-  };
+  // Remove leading zeros and handle empty
+  const cleaned = value.replace(/^0+/, '') || '';
+  
+  if (cleaned === '') {
+    setSubScores((prev) => ({ ...prev, [dimension]: '' }));
+  } else {
+    const numValue = Math.min(100, Math.max(0, parseInt(cleaned) || 0));
+    setSubScores((prev) => ({ ...prev, [dimension]: numValue }));
+  }
+};
 
-  const handleMainScoreChange = (dimension: MainDimension, value: string) => {
-    if (value === '') {
-      setMainScores((prev) => ({ ...prev, [dimension]: '' }));
-    } else {
-      const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
-      setMainScores((prev) => ({ ...prev, [dimension]: numValue }));
-    }
-  };
-
+ const handleMainScoreChange = (dimension: MainDimension, value: string) => {
+  // Remove leading zeros and handle empty
+  const cleaned = value.replace(/^0+/, '') || '';
+  
+  if (cleaned === '') {
+    setMainScores((prev) => ({ ...prev, [dimension]: '' }));
+  } else {
+    const numValue = Math.min(100, Math.max(0, parseInt(cleaned) || 0));
+    setMainScores((prev) => ({ ...prev, [dimension]: numValue }));
+  }
+};
   const handleSubmit = () => {
     // Convert empty strings to 50 (default) before submitting
     const processedSubScores: Record<SubDimension, number> = {} as Record<SubDimension, number>;
