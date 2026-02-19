@@ -160,7 +160,7 @@ Senin Guclu Ozeliklerin:
 
 [En az 6 guclu ozellik devam et]
 
-Bu guclu ozellikleri kendi hayatinla eslestiriyor musun? Hangileri sana cok tanidik geldi?"
+Bu guclu ozellikleri kendi hayatinla eslestiriyor musun? Hangileri sana  daha cok tanidik geldi?"
 
 ===== KONUSMA AKISI =====
 
