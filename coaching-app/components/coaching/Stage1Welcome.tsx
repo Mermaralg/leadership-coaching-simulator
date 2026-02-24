@@ -28,46 +28,60 @@ export default function Stage1Welcome() {
 
         <div className="space-y-6 mb-8">
           <div className="bg-blue-50 border-l-4 border-blue-600 p-4 rounded">
-            <h2 className="font-semibold text-gray-900 mb-2">
-              Hoş Geldiniz!
+            <h2 className="font-semibold text-gray-900 mb-3 text-lg">
+              Merhaba! 👋
             </h2>
-            <p className="text-gray-700">
-              Bu interaktif koçluk simülatörü, <strong>5D Kişilik Modeli</strong> (Big Five)
-              kullanarak liderlik özell iklerinizi değerlendirir ve gelişim için öneriler sunar.
+            <p className="text-gray-700 mb-3">
+              Ben senin <strong>5D Kişilik Koçunum</strong>. Bu yolculukta amacım, kendini daha iyi tanımanı sağlamak, güçlü yanlarını görmeni ve gelişim alanlarında farkındalık kazanmanı desteklemek.
             </p>
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">5D Kişilik Boyutları:</h3>
-            <ul className="space-y-2 text-gray-700">
+            <h3 className="font-semibold text-gray-900 mb-3">Bu süreçte neler yapacağız?</h3>
+            <p className="text-gray-700 mb-4">
+              Birlikte <strong>Big Five Kişilik Modeli</strong>'ni kullanarak senin 5D kişilik envanteri sonuçlarını beraber keşfedeceğiz. Bu model 5 ana boyuttan oluşuyor:
+            </p>
+            <ul className="space-y-3 text-gray-700">
               <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Duygusal Denge:</strong> Duygu Kontrolü, Stresle Başa Çıkma, Özgüven</span>
+                <span className="text-blue-600 font-bold mr-3 mt-1">1.</span>
+                <div>
+                  <strong>Duygusal Denge</strong> - Duygularını nasıl yönettiğin, stresle başa çıkman
+                </div>
               </li>
               <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Dikkat ve Düzen:</strong> Risk Duyarlılık, Kontrolcülük, Kural Uyumu</span>
+                <span className="text-blue-600 font-bold mr-3 mt-1">2.</span>
+                <div>
+                  <strong>Dikkat ve Düzen</strong> - Planlılığın, kontrol ihtiyacın, kurallara yaklaşımın
+                </div>
               </li>
               <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Dışadönüklük:</strong> Öne Çıkmayı Seven, Sosyallik, Başarı Yönelimi</span>
+                <span className="text-blue-600 font-bold mr-3 mt-1">3.</span>
+                <div>
+                  <strong>Dışadönüklük</strong> - Sosyalliğin, öne çıkman, başarı yönelimin
+                </div>
               </li>
               <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Dengeli İlişki:</strong> İlişki Yönetimi, İyi Geçinme, Kaçınma</span>
+                <span className="text-blue-600 font-bold mr-3 mt-1">4.</span>
+                <div>
+                  <strong>Dengeli İlişki</strong> - İlişkileri nasıl yönettiğin, çatışmaya yaklaşımın
+                </div>
               </li>
               <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span><strong>Deneyime Açıklık:</strong> Yenilikçilik, Öğrenme Yönelimi, Merak</span>
+                <span className="text-blue-600 font-bold mr-3 mt-1">5.</span>
+                <div>
+                  <strong>Deneyime Açıklık</strong> - Yeniliğe, öğrenmeye, farklı fikirlere açıklığın
+                </div>
               </li>
             </ul>
+            <p className="text-gray-700 mt-4">
+              Her boyutun altında <strong>3'er alt özellik</strong> var - toplamda <strong>15 farklı kişilik özelliğini</strong> inceleyeceğiz.
+            </p>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded">
-            <h3 className="font-semibold text-gray-900 mb-2">Süreç:</h3>
+          <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
+            <h3 className="font-semibold text-gray-900 mb-2">⚠️ Önemli:</h3>
             <p className="text-gray-700 text-sm">
-              6 aşamada ilerleyeceğiz: Tanışma, Puanlama, Güçlü Özellikler,
-              Gelişim Alanları, Eylem Önerileri ve Özet.
+              Bu süreç <strong>sırayla ilerliyor</strong>. Her aşamayı bitirdikten sonra bir sonrakine geçeceğiz.
             </p>
           </div>
         </div>
@@ -75,7 +89,7 @@ export default function Stage1Welcome() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Lütfen adınızı girin:
+              Hazır mısın? İsmini öğrenebilir miyim? 😊
             </label>
             <input
               type="text"
@@ -99,3 +113,4 @@ export default function Stage1Welcome() {
     </div>
   );
 }
+```
