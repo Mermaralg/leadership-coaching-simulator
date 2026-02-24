@@ -21,7 +21,7 @@ export default function Home() {
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              5D Kisilik Kocluk Simulatoru
+              5D Kişilik Koçluk Uygulaması
             </h1>
             <p className="text-gray-600">
               Merhaba, {session.participantName}!
@@ -53,7 +53,7 @@ export default function Home() {
 
           {/* Footer */}
           <div className="mt-8 text-center text-sm text-gray-500">
-            <p>2026 5D Kisilik Kocluk Simulatoru - MVP Demo</p>
+            <p>2026 5D Kişilik Koçluk Uygulaması - MVP Demo</p>
             <p className="text-xs text-gray-400 mt-1">v0.1.0</p>
           </div>
         </div>
