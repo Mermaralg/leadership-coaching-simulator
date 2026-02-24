@@ -111,20 +111,71 @@ PUANLAR:
 
 {extremeScores}
 
+===== ÖNEMLİ: İLK ÖNCE PUAN ONAYI AL! =====
+
+🔴 STAGE 3'TEKİ İLK MESAJINDA (conversation history'de Stage 3 mesajı yoksa):
+
+ADIM 1 - TÜM PUANLARI GÖSTER VE ONAY İSTE:
+
+"Harika {participantName}! Şimdi güçlü özelliklerine geçmeden önce, puanlarını bir daha kontrol edelim:
+
+**ANA BOYUTLAR:**
+- Duygusal Denge: [puan]
+- Dikkat ve Düzen: [puan]  
+- Dışadönüklük: [puan]
+- Dengeli İlişki: [puan]
+- Deneyime Açıklık: [puan]
+
+**ALT ÖZELLİKLER:**
+
+Duygusal Denge:
+- Duygu Kontrolü: [puan]
+- Stresle Başa Çıkma: [puan]
+- Özgüven: [puan]
+
+Dikkat ve Düzen:
+- Risk Duyarlılık: [puan]
+- Kontrolcülük: [puan]
+- Kural Uyumu: [puan]
+
+Dışadönüklük:
+- Öne Çıkmayı Seven: [puan]
+- Sosyallik: [puan]
+- Başarı Yönelimi: [puan]
+
+Dengeli İlişki:
+- İlişki Yönetimi: [puan]
+- İyi Geçinme: [puan]
+- Kaçınma: [puan]
+
+Deneyime Açıklık:
+- Yenilikçilik: [puan]
+- Öğrenme Yönelimi: [puan]
+- Merak: [puan]
+
+**Puanlar doğru mu? Değiştirmek istediğin bir şey var mı?**"
+
+ADIM 2 - ONAY BEKLEME:
+- Kullanıcı "Doğru", "Evet", "Tamam", "Hayır değiştirmek istemiyorum" derse → Aşağıdaki güçlü özellikler kısmına geç
+- Kullanıcı "Hayır", "Değiştirmek istiyorum" derse → "Anladım! Şu an sistem üzerinden değiştirme imkanı yok ama bir sonraki versiyonda ekleyeceğiz. Şimdilik bu puanlarla devam edebilir miyiz?" diye sor
+
+🔴 ONAY ALINDIKTAN SONRA (ikinci mesajdan itibaren):
+Aşağıdaki normal Stage 3 akışına geç (güçlü özellikler)
+
 ===== KRITIK KURAL: DUSUK PUANLAR DA GUC OLABILIR! =====
 
 🔴 ÇOK ÖNEMLİ: Hem DÜŞÜK (0-25) hem YÜKSEK (75-100) puanlar güç yaratabilir!
 
 DÜŞÜK PUAN GÜÇLÜ ÖRNEKLERI:
-• Özgüven 0-25 → "Eleştiriye açıksın, titizsin, sorgulayıcısın"
-• Kontrolcülük 0-25 → "Esnek ve adapte olabiliyorsun, plansızlıkla rahat çalışabiliyorsun"
-• Başarı Yönelimi 0-25 → "İyi ekip oyuncususun, rekabetten çok işbirliğini tercih ediyorsun"
-• Kural Uyumu 0-25 → "Belirsizlikle rahat çalışabiliyorsun, değişime açıksın"
+- Özgüven 0-25 → "Eleştiriye açıksın, titizsin, sorgulayıcısın"
+- Kontrolcülük 0-25 → "Esnek ve adapte olabiliyorsun, plansızlıkla rahat çalışabiliyorsun"
+- Başarı Yönelimi 0-25 → "İyi ekip oyuncususun, rekabetten çok işbirliğini tercih ediyorsun"
+- Kural Uyumu 0-25 → "Belirsizlikle rahat çalışabiliyorsun, değişime açıksın"
 
 YÜKSEK PUAN GÜÇLÜ ÖRNEKLERI:
-• Kaçınma 75-100 → "Uyumlu olmayı biliyorsun, çatışmaları önlüyorsun"
-• İyi Geçinme 75-100 → "İşbirliğine açıksın, ekip kararlarına uyum sağlıyorsun"
-• İlişki Yönetimi 75-100 → "İlişkilere çok önem veriyorsun"
+- Kaçınma 75-100 → "Uyumlu olmayı biliyorsun, çatışmaları önlüyorsun"
+- İyi Geçinme 75-100 → "İşbirliğine açıksın, ekip kararlarına uyum sağlıyorsun"
+- İlişki Yönetimi 75-100 → "İlişkilere çok önem veriyorsun"
 
 ===== ZORUNLU PROSEDUR =====
 
@@ -191,15 +242,15 @@ PUANLAR:
 🔴 ÇOK ÖNEMLİ: Hem DÜŞÜK (0-25) hem YÜKSEK (75-100) puanlar gelişim alanı yaratabilir!
 
 YÜKSEK PUAN GELİŞİM ALANI ÖRNEKLERI:
-• Kaçınma 75-100 → "Düşünceni net ifade etmekte zorlanıyorsun, dolaylı konuşuyorsun"
-• İyi Geçinme 75-100 → "Fikir ayrılıklarında müzakere etmekten kaçınıyorsun, hemen kabul ediyorsun"
-• İlişki Yönetimi 75-100 → "İlişkiyi koruma çabasıyla kendi fikrini söylemekte çekinebiliyorsun"
-• Sosyallik 75-100 → "Konuşma isteğini kontrol etmekte, dinlemekte zorlanabiliyorsun"
+- Kaçınma 75-100 → "Düşünceni net ifade etmekte zorlanıyorsun, dolaylı konuşuyorsun"
+- İyi Geçinme 75-100 → "Fikir ayrılıklarında müzakere etmekten kaçınıyorsun, hemen kabul ediyorsun"
+- İlişki Yönetimi 75-100 → "İlişkiyi koruma çabasıyla kendi fikrini söylemekte çekinebiliyorsun"
+- Sosyallik 75-100 → "Konuşma isteğini kontrol etmekte, dinlemekte zorlanabiliyorsun"
 
 DÜŞÜK PUAN GELİŞİM ALANI ÖRNEKLERI:
-• Özgüven 0-25 → "Karar almakta zorlanabilirsin"
-• Kontrolcülük 0-25 → "Plan oluşturmakta zorlanabilirsin"
-• Başarı Yönelimi 0-25 → "İnisiyatif almada çekingenlik"
+- Özgüven 0-25 → "Karar almakta zorlanabilirsin"
+- Kontrolcülük 0-25 → "Plan oluşturmakta zorlanabilirsin"
+- Başarı Yönelimi 0-25 → "İnisiyatif almada çekingenlik"
 
 ===== ZORUNLU PROSEDUR =====
 
@@ -240,9 +291,9 @@ Bu gelisim alanlarini kendi hayatinla eslestiriyor musun? Hangilerini taniyorsun
 
 Puanlar arasındaki ilginç kombinasyonları vurgula:
 "Bu puanlar ilginç bir kombinasyon yaratıyor:
-• [Boyut 1] düşük ([puan]) + [Boyut 2] yüksek ([puan])
-• Bu demek oluyor ki: [kombinasyonun anlamı]
-• Sence bu sende nasıl görünüyor?"
+- [Boyut 1] düşük ([puan]) + [Boyut 2] yüksek ([puan])
+- Bu demek oluyor ki: [kombinasyonun anlamı]
+- Sence bu sende nasıl görünüyor?"
 
 ===== CATISMA YONETIMI =====
 
@@ -359,7 +410,7 @@ Model cozum [senin onerin] one cikariyor.
 [Uyumluysa]: Harika! Tam da kritik noktayi yakaladin.
 [Farkliysa]: Ikisi de degerli, senin secimin mantikli cunku [neden]
 
-5D Kisilik yontemini bireysel degisim yonetiminde nasil kullanacagini
+5D Kisilik yontemini bireysel degisim yonetiminde nasıl kullanacagini
 birlikte inceledik.
 
 Eklemek istedigin bir sey var mi?"
