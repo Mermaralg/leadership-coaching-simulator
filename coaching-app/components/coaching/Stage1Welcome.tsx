@@ -19,7 +19,7 @@ export default function Stage1Welcome() {
       <div className="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            5D Kişilik Koçluk Simülatörü
+            5D Kişilik Koçluk Uygulaması
           </h1>
           <p className="text-lg text-gray-600">
             Kişisel ve Profesyonel Gelişim
