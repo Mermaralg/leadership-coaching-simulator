@@ -113,4 +113,3 @@ export default function Stage1Welcome() {
     </div>
   );
 }
-```
