@@ -1,4 +1,4 @@
-import { SubDimension, StrengthItem, DevelopmentItem } from '@/types/coaching';
+import { SubDimension, MainDimension, StrengthItem, DevelopmentItem } from '@/types/coaching';
 import { STRENGTH_DATA } from '../data/strengths';
 import { DEVELOPMENT_DATA } from '../data/development';
 
@@ -32,16 +32,48 @@ function getExtremeness(score: number): number {
   return Math.abs(score - 50);
 }
 
-export function analyzeStrengths(scores: Record<SubDimension, number>): StrengthItem[] {
+export function analyzeStrengths(
+  scores: Record<SubDimension, number>,
+  mainScores?: Record<MainDimension, number>
+): StrengthItem[] {
   console.log('[analyzeStrengths] Input scores:', scores);
+  console.log('[analyzeStrengths] Main scores:', mainScores);
   const strengths: StrengthItem[] = [];
 
+  // ✅ FIRST: Add main dimensions if provided (Stage 2)
+  if (mainScores) {
+    Object.entries(mainScores).forEach(([dimension, score]) => {
+      const mainDim = dimension as MainDimension;
+      const category = getScoreCategory(score);
+      const isExtreme = isExtremeScore(score);
+      
+      console.log(`[analyzeStrengths] Processing MAIN ${mainDim}: score=${score}, category=${category}, isExtreme=${isExtreme}`);
+      
+      // Find strength data for this main dimension
+      const strengthData = STRENGTH_DATA.find(
+        (d) => d.dimension === mainDim && d.scoreRange === category
+      );
+
+      if (strengthData && strengthData.strengths.length > 0) {
+        const item: StrengthItem = {
+          dimension: mainDim as any, // MainDimension can be used as dimension
+          score,
+          description: strengthData.strengths[0],
+          category,
+        };
+        console.log(`[analyzeStrengths] Adding MAIN strength:`, item);
+        strengths.push(item);
+      }
+    });
+  }
+
+  // ✅ THEN: Add sub dimensions
   Object.entries(scores).forEach(([dimension, score]) => {
     const subDim = dimension as SubDimension;
     const category = getScoreCategory(score);
     const isExtreme = isExtremeScore(score);
     
-    console.log(`[analyzeStrengths] Processing ${subDim}: score=${score}, category=${category}, isExtreme=${isExtreme}`);
+    console.log(`[analyzeStrengths] Processing SUB ${subDim}: score=${score}, category=${category}, isExtreme=${isExtreme}`);
     
     // Find strength data for this dimension and score category
     const strengthData = STRENGTH_DATA.find(
@@ -55,7 +87,7 @@ export function analyzeStrengths(scores: Record<SubDimension, number>): Strength
         description: strengthData.strengths[0],
         category,
       };
-      console.log(`[analyzeStrengths] Adding strength:`, item);
+      console.log(`[analyzeStrengths] Adding SUB strength:`, item);
       strengths.push(item);
     }
   });
@@ -89,11 +121,41 @@ export function analyzeStrengths(scores: Record<SubDimension, number>): Strength
 }
 
 export function analyzeDevelopmentAreas(
-  scores: Record<SubDimension, number>
+  scores: Record<SubDimension, number>,
+  mainScores?: Record<MainDimension, number>
 ): DevelopmentItem[] {
   console.log('[analyzeDevelopmentAreas] Input scores:', scores);
+  console.log('[analyzeDevelopmentAreas] Main scores:', mainScores);
   const developmentAreas: DevelopmentItem[] = [];
 
+  // ✅ FIRST: Add main dimensions if provided (Stage 2)
+  if (mainScores) {
+    Object.entries(mainScores).forEach(([dimension, score]) => {
+      const mainDim = dimension as MainDimension;
+      const category = getScoreCategory(score);
+      const isExtreme = isExtremeScore(score);
+      
+      console.log(`[analyzeDevelopmentAreas] Processing MAIN ${mainDim}: score=${score}, isExtreme=${isExtreme}`);
+      
+      // Find development data for this main dimension
+      const devData = DEVELOPMENT_DATA.find(
+        (d) => d.dimension === mainDim && d.scoreRange === category
+      );
+
+      if (devData && devData.developments.length > 0) {
+        const item: DevelopmentItem = {
+          dimension: mainDim as any, // MainDimension can be used as dimension
+          score,
+          description: devData.developments[0],
+          category,
+        };
+        console.log(`[analyzeDevelopmentAreas] Adding MAIN development:`, item);
+        developmentAreas.push(item);
+      }
+    });
+  }
+
+  // ✅ THEN: Add sub dimensions
   Object.entries(scores).forEach(([dimension, score]) => {
     const subDim = dimension as SubDimension;
     const category = getScoreCategory(score);
@@ -111,7 +173,7 @@ export function analyzeDevelopmentAreas(
         description: devData.developments[0],
         category,
       };
-      console.log(`[analyzeDevelopmentAreas] Adding:`, item, `isExtreme=${isExtreme}`);
+      console.log(`[analyzeDevelopmentAreas] Adding SUB development:`, item, `isExtreme=${isExtreme}`);
       developmentAreas.push(item);
     }
   });
