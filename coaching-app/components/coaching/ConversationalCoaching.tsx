@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useCoaching, CoachAttitude } from '@/lib/context/CoachingContext';
 import { Message, CoachingState } from '@/lib/services/aiCoach';
 import ChatInterface from './ChatInterface';
-import { SubDimension } from '@/types/coaching';
+import { SubDimension, MainDimension } from '@/types/coaching';
 
 const STAGE_TITLES: Record<number, string> = {
   3: 'Guclu Ozellikler',
@@ -29,14 +29,15 @@ export default function ConversationalCoaching() {
 
     initializedStage.current = session.currentStage;
 
-    const initialState: CoachingState = {
-      stage: session.currentStage as CoachingState['stage'],
-      participantName: session.participantName,
-      scores: session.profile?.scores as Record<SubDimension, number>,
-      strengths: session.strengths?.map(s => s.dimension),
-      developmentAreas: session.developmentAreas?.map(d => d.dimension),
-      conversationHistory: [],
-    };
+  const initialState: CoachingState = {
+  stage: session.currentStage as CoachingState['stage'],
+  participantName: session.participantName,
+  scores: session.profile?.scores as Record<SubDimension, number>,
+  mainScores: session.profile?.mainDimensionScores as Record<MainDimension, number>,
+  strengths: session.strengths?.map(s => s.dimension),
+  developmentAreas: session.developmentAreas?.map(d => d.dimension),
+  conversationHistory: [],
+};
     setCoachingState(initialState);
 
     if (session.currentStage >= 3) {
