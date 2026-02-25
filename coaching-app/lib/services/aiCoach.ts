@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { SubDimension, CoachingStage } from '@/types/coaching';
+import { SubDimension, CoachingStage, MainDimension } from '@/types/coaching';
 import { documentStore } from './documentStore';
 import { CoachAttitude, DEFAULT_ATTITUDE } from '@/lib/context/CoachingContext';
 
@@ -12,35 +12,55 @@ export interface CoachingState {
   stage: CoachingStage;
   participantName?: string;
   scores?: Record<SubDimension, number>;
+  mainScores?: Record<MainDimension, number>;
   strengths?: string[];
   developmentAreas?: string[];
   selectedActions?: string[];
   conversationHistory: Message[];
 }
 
-// Helper to format scores for AI context
-function formatScoresForAI(scores: Record<SubDimension, number>): string {
+// Helper to format ALL scores (main + sub) for AI context
+function formatAllScoresForAI(
+  subScores: Record<SubDimension, number>,
+  mainScores?: Record<MainDimension, number>
+): string {
+  let result = '';
+
+  // Main dimensions first
+  if (mainScores) {
+    result += 'ANA BOYUTLAR:\n';
+    result += `Duygusal Denge: ${mainScores.duygusal_denge}\n`;
+    result += `Dikkat ve Düzen: ${mainScores.dikkat_duzen}\n`;
+    result += `Dışadönüklük: ${mainScores.disadonukluk}\n`;
+    result += `Dengeli İlişki: ${mainScores.dengeli_iliski}\n`;
+    result += `Deneyime Açıklık: ${mainScores.deneyime_aciklik}\n\n`;
+  }
+
+  // Sub dimensions
   const dimensionNames: Record<SubDimension, string> = {
-    duygu_kontrolu: 'Duygu Kontrolu',
-    stresle_basa_cikma: 'Stresle Basa Cikma',
-    ozguven: 'Ozguven',
-    risk_duyarlilik: 'Risk Duyarlilik',
-    kontrolculuk: 'Kontrolculuk',
+    duygu_kontrolu: 'Duygu Kontrolü',
+    stresle_basa_cikma: 'Stresle Başa Çıkma',
+    ozguven: 'Özgüven',
+    risk_duyarlilik: 'Risk Duyarlılık',
+    kontrolculuk: 'Kontrolcülük',
     kural_uyumu: 'Kural Uyumu',
-    one_cikmayi_seven: 'One Cikmayi Seven',
+    one_cikmayi_seven: 'Öne Çıkmayı Seven',
     sosyallik: 'Sosyallik',
-    basari_yonelimi: 'Basari Yonelimi',
-    iliski_yonetimi: 'Iliski Yonetimi',
-    iyi_gecinme: 'Iyi Gecinme',
-    kacinma: 'Kacinma',
-    yenilikcilik: 'Yenilikcilik',
-    ogrenme_yonelimi: 'Ogrenme Yonelimi',
+    basari_yonelimi: 'Başarı Yönelimi',
+    iliski_yonetimi: 'İlişki Yönetimi',
+    iyi_gecinme: 'İyi Geçinme',
+    kacinma: 'Kaçınma',
+    yenilikcilik: 'Yenilikçilik',
+    ogrenme_yonelimi: 'Öğrenme Yönelimi',
     merak: 'Merak',
   };
 
-  return Object.entries(scores)
+  result += 'ALT ÖZELLİKLER:\n';
+  result += Object.entries(subScores)
     .map(([key, value]) => `${dimensionNames[key as SubDimension]}: ${value}`)
     .join('\n');
+
+  return result;
 }
 
 // Helper to identify extreme scores (0-25 and 75-100 are Priority 1)
@@ -107,7 +127,7 @@ Kullanici ismini soyledikten SONRA:
 
 KATILIMCI: {participantName}
 PUANLAR:
-{scores}
+{allScores}
 
 {extremeScores}
 
@@ -119,39 +139,7 @@ ADIM 1 - TÜM PUANLARI GÖSTER VE ONAY İSTE:
 
 "Harika {participantName}! Şimdi güçlü özelliklerine geçmeden önce, puanlarını bir daha kontrol edelim:
 
-**ANA BOYUTLAR:**
-- Duygusal Denge: [puan]
-- Dikkat ve Düzen: [puan]  
-- Dışadönüklük: [puan]
-- Dengeli İlişki: [puan]
-- Deneyime Açıklık: [puan]
-
-**ALT ÖZELLİKLER:**
-
-Duygusal Denge:
-- Duygu Kontrolü: [puan]
-- Stresle Başa Çıkma: [puan]
-- Özgüven: [puan]
-
-Dikkat ve Düzen:
-- Risk Duyarlılık: [puan]
-- Kontrolcülük: [puan]
-- Kural Uyumu: [puan]
-
-Dışadönüklük:
-- Öne Çıkmayı Seven: [puan]
-- Sosyallik: [puan]
-- Başarı Yönelimi: [puan]
-
-Dengeli İlişki:
-- İlişki Yönetimi: [puan]
-- İyi Geçinme: [puan]
-- Kaçınma: [puan]
-
-Deneyime Açıklık:
-- Yenilikçilik: [puan]
-- Öğrenme Yönelimi: [puan]
-- Merak: [puan]
+{allScores}
 
 **Puanlar doğru mu? Değiştirmek istediğin bir şey var mı?**"
 
@@ -233,7 +221,7 @@ MESAJ SAYACI: {messageCount} mesaj
 
 KATILIMCI: {participantName}
 PUANLAR:
-{scores}
+{allScores}
 
 {extremeScores}
 
@@ -359,7 +347,7 @@ MESAJ SAYACI: {messageCount} mesaj
 
 KATILIMCI: {participantName}
 PUANLAR:
-{scores}
+{allScores}
 
 ===== ZORUNLU PROSEDUR =====
 
@@ -456,9 +444,12 @@ export class AICoachService {
         ? (stageMessageCount >= 4 ? 'UYARI: Stage 5\'e gecme zamani!' : '')
         : (stageMessageCount >= 3 ? 'UYARI: Asama gecisi zamani!' : '');
 
+      // Format all scores (main + sub)
+      const allScoresFormatted = formatAllScoresForAI(state.scores, state.mainScores);
+
       systemPrompt = systemPrompt
         .replace(/{participantName}/g, state.participantName || 'Katilimci')
-        .replace('{scores}', formatScoresForAI(state.scores))
+        .replace(/{allScores}/g, allScoresFormatted)
         .replace('{extremeScores}', getExtremeScores(state.scores))
         .replace('{messageCount}', stageMessageCount.toString())
         .replace('{messageCountWarning}', messageCountWarning)
