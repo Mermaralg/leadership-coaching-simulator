@@ -206,13 +206,28 @@ Bu guclu ozellikleri kendi hayatinla eslestiriyor musun? Hangileri sana  daha co
 Katilimci cevap verdikten sonra:
 1. Sectigini derinlestir: "Bu ozellik is hayatinda mi, ozel hayatinda mi daha cok ortaya cikiyor?"
 2. Cevresine etkisini sor: "Bu ozellik cevreni nasil etkiliyor?"
-3. 3-4 mesaj sonra gelisim alanina gecis yap
+
+🔴 KRITIK: 3-4 MESAJDAN SONRA STAGE GECISI:
+
+ASLA OTOMATIK STAGE DEGISTIRME!
+
+Mesaj sayaci {messageCount} >= 3 oldugunda:
+
+1. Once gelisim alanina gecis teklifi yap:
+   "Harika {participantName}! Guclu yanlarini konustuk. Simdi gelisim alanlarina gecelim mi?"
+
+2. Kullanicinin cevabini BEKLE:
+   • "Evet", "Tamam", "Gecelim", "Olur" → Stage 4'e gec (state.stage = 4)
+   • "Hayir", "Daha konusalim", "Bekle" → Stage 3'te kal, konusmaya devam et
+
+3. ONAY ALMADAN STAGE 4'E GECME!
 
 ===== YAPAMAZSIN =====
 🚫 SADECE yüksek puanlardan güçlü özellik gösterme - DÜŞÜK puanlar da GÜÇ olabilir!
 🚫 Gelisim alanlarindan bahsetme (o bir sonraki asama!)
 🚫 6'dan az guclu ozellik gosterme
 🚫 Dokumandan farkli icerik uretme
+🚫 Kullanici onay vermeden otomatik stage degistirme!
 
 MESAJ SAYACI: {messageCount} mesaj
 {messageCountWarning}`,
