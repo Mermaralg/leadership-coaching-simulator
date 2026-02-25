@@ -145,7 +145,9 @@ ADIM 1 - TÜM PUANLARI GÖSTER VE ONAY İSTE:
 
 ADIM 2 - ONAY BEKLEME:
 - Kullanıcı "Doğru", "Evet", "Tamam", "Hayır değiştirmek istemiyorum" derse → Aşağıdaki güçlü özellikler kısmına geç
-- Kullanıcı "Hayır", "Değiştirmek istiyorum" derse → "Anladım! Şu an sistem üzerinden değiştirme imkanı yok ama bir sonraki versiyonda ekleyeceğiz. Şimdilik bu puanlarla devam edebilir miyiz?" diye sor
+- Kullanıcı "Hayır", "Değiştirmek istiyorum", "Yanlış", "Hatalı" derse → 
+  "Tamam! Seni puanları girdiğin sayfaya geri gönderiyorum. Puanlarını düzelt ve 'Devam Et' butonuna bas."
+  [Bu mesajı yazdıktan sonra otomatik olarak Stage 2'ye döneceksin - state.stage = 2]
 
 🔴 ONAY ALINDIKTAN SONRA (ikinci mesajdan itibaren):
 Aşağıdaki normal Stage 3 akışına geç (güçlü özellikler)
@@ -188,18 +190,28 @@ ADIM 3 - MINIMUM 6 GUCLU OZELLIK GOSTER:
 
 ===== YANIT FORMATI =====
 
+🔴 KRITIK DOKÜMAN KURALI:
+- Güçlü.md dosyasından maddeleri AYNEN KOPYALA
+- Kendi cümlelerini EKLEME
+- Yorum YAPMA, açıklama YAPMA
+- "Başlık" kısmını sen yaz AMA maddeleri dokümanın TAM kopyası olmalı!
+
 "{participantName}, simdi senin guclu yanlarini konusalim. Unutma: Hem yuksek hem dusuk puanlar guclu alan yaratabilir!
 
 Senin Guclu Ozeliklerin:
 
-🌟 [GUCLU YAN BASLIGI] ([Boyut Adi]: {puan})
-- [Guclu.md'den madde 1]
-- [Guclu.md'den madde 2]
-- [Guclu.md'den madde 3]
+🌟 **[Kısa başlık]** ([Boyut Adi]: {puan})
+[Güçlü.md'den o boyutun o puan aralığındaki TÜM maddeleri - AYNEN KOPYALA, hiç değiştirme!]
 
-[En az 6 guclu ozellik devam et]
+🌟 **[Kısa başlık]** ([Boyut Adi]: {puan})
+[Güçlü.md'den o boyutun o puan aralığındaki TÜM maddeleri - AYNEN KOPYALA, hiç değiştirme!]
+
+[En az 6 guclu ozellik - her birinin maddeleri DOKÜMANIN TAM KOPYASI]
+
+KRITIK: Maddeleri kendin YAZMA! Dokümandan KOPYALA! Yorum ekleme!
 
 Bu guclu ozellikleri kendi hayatinla eslestiriyor musun? Hangileri sana  daha cok tanidik geldi?"
+
 ===== KONUSMA AKISI =====
 
 Katilimci cevap verdikten sonra:
@@ -225,7 +237,8 @@ Mesaj sayaci {messageCount} >= 3 oldugunda:
 🚫 SADECE yüksek puanlardan güçlü özellik gösterme - DÜŞÜK puanlar da GÜÇ olabilir!
 🚫 Gelisim alanlarindan bahsetme (o bir sonraki asama!)
 🚫 6'dan az guclu ozellik gosterme
-🚫 Dokumandan farkli icerik uretme
+🚫 Dokumandan farkli icerik uretme - AYNEN KOPYALA!
+🚫 Doküman maddelerine yorum ekleme!
 🚫 Kullanici onay vermeden otomatik stage degistirme!
 
 MESAJ SAYACI: {messageCount} mesaj
@@ -277,15 +290,25 @@ ADIM 3 - EN AZ 6 GELISIM ALANI GOSTER:
 
 ===== YANIT FORMATI =====
 
+🔴 KRITIK DOKÜMAN KURALI:
+- Gelişim.md dosyasından maddeleri AYNEN KOPYALA
+- Kendi cümlelerini EKLEME
+- Yorum YAPMA, açıklama YAPMA
+- "Başlık" kısmını sen yaz AMA maddeleri dokümanın TAM kopyası olmalı!
+
 "{participantName}, simdi senin gelisim alanlarina bakalim. Unutma: Bunlar senin 'zayifliklarin' degil - bunlar potansiyel buyume firsatlarin! Hem yuksek hem dusuk puanlar gelisim alani yaratabilir.
 
 Senin Gelisim Alanlarin:
 
-💡 [GELISIM ALANI BASLIGI] ([Boyut Adi]: {puan})
-- [Gelisim.md'den madde 1]
-- [Gelisim.md'den madde 2]
+💡 **[Kısa başlık]** ([Boyut Adi]: {puan})
+[Gelişim.md'den o boyutun o puan aralığındaki TÜM maddeleri - AYNEN KOPYALA, hiç değiştirme!]
 
-[En az 6 gelisim alani devam et]
+💡 **[Kısa başlık]** ([Boyut Adi]: {puan})
+[Gelişim.md'den o boyutun o puan aralığındaki TÜM maddeleri - AYNEN KOPYALA, hiç değiştirme!]
+
+[En az 6 gelisim alani - her birinin maddeleri DOKÜMANIN TAM KOPYASI]
+
+KRITIK: Maddeleri kendin YAZMA! Dokümandan KOPYALA! Yorum ekleme!
 
 Bu gelisim alanlarini kendi hayatinla eslestiriyor musun? Hangilerini taniyorsun?"
 
@@ -583,10 +606,21 @@ GENEL KURALLAR:
   ): CoachingState {
     const newState = { ...state };
 
+    // Stage 1: Name extraction
     if (state.stage === 1 && !state.participantName) {
       const nameMatch = userMessage.match(/\b([A-ZÇĞİÖŞÜ][a-zçğıöşü]+)\b/);
       if (nameMatch) {
         newState.participantName = nameMatch[1];
+      }
+    }
+
+    // Stage 3: Score edit request - go back to Stage 2
+    if (state.stage === 3) {
+      const wantsToEdit = /hayır|hayir|değiştir|degistir|yanlış|yanlis|hatalı|hatali|düzelt|duzelt/i.test(userMessage);
+      const aiConfirmedReturn = /puanları girdiğin sayfaya|puanlari girdigin sayfaya|geri gönderiyorum|geri gonderiyorum/i.test(assistantMessage);
+      
+      if (wantsToEdit && aiConfirmedReturn) {
+        newState.stage = 2; // Go back to score entry!
       }
     }
 
