@@ -36,6 +36,15 @@ if ((state.stage === 3 || state.stage === 4)) {
     });
   }
 }
+    // Stage 3 geçiş kontrolü - Kullanıcı onayı zorunlu
+if (state.stage === 3) {
+  const userWantsTransition = /evet|tamam|geçelim|gecelim|olur|başla|haydi/i.test(message.toLowerCase());
+  
+  // Kullanıcı açıkça "evet" demeden Stage 4'e geçmeyi ENGELLE
+  if (!userWantsTransition) {
+    state.stage = 3; // Force Stage 3
+  }
+}
     // Use provided attitude or default
     const coachAttitude = attitude || DEFAULT_ATTITUDE;
 
