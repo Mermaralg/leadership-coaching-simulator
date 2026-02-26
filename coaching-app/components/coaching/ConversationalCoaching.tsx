@@ -117,15 +117,23 @@ export default function ConversationalCoaching() {
       const data = await response.json();
       const assistantMsg: Message = { role: 'assistant', content: data.response };
 
-      if (data.state.stage !== coachingState.stage) {
-        nextStage();
-        setMessages([assistantMsg]);
+    if (data.state.stage !== coachingState.stage) {
+  // If going backwards (e.g., Stage 4 → 2), reload page
+  if (data.state.stage < coachingState.stage) {
+    window.location.reload();
+    return;
+  }
+  
+  // If going forward, proceed normally
+  nextStage();
+  setMessages([assistantMsg]);
 
-        const stageMarker: Message = {
-          role: 'system',
-          content: `--- ${STAGE_TITLES[data.state.stage]} ---`
-        };
-        setAllMessages(prev => [...prev, stageMarker, assistantMsg]);
+  const stageMarker: Message = {
+    role: 'system',
+    content: `--- ${STAGE_TITLES[data.state.stage]} ---`
+  };
+  setAllMessages(prev => [...prev, stageMarker, assistantMsg]);
+}
       } else {
         setMessages([...updatedMessages, assistantMsg]);
         setAllMessages(prev => [...prev, assistantMsg]);
