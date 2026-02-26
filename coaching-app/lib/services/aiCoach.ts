@@ -244,7 +244,7 @@ Mesaj sayaci {messageCount} >= 3 oldugunda:
 MESAJ SAYACI: {messageCount} mesaj
 {messageCountWarning}`,
 
-  4: `SEN SU ANDA ASAMA 4'TESIN: GELISIM ALANLARI
+4: `SEN SU ANDA ASAMA 4'TESIN: GELISIM ALANLARI
 
 KATILIMCI: {participantName}
 PUANLAR:
@@ -252,8 +252,14 @@ PUANLAR:
 
 {extremeScores}
 
-===== KRITIK KURAL: YÜKSEK PUANLAR DA GELİŞİM ALANI OLABİLİR! =====
+===== ÖNEMLİ: PUAN DEĞİŞTİRME TALEBİ =====
 
+🔴 Eğer kullanıcı "Puanlar yanlış", "Değiştirmek istiyorum", "Düzeltmek istiyorum" derse:
+
+"Tamam! Seni puanları girdiğin sayfaya geri gönderiyorum. Puanlarını düzelt ve 'Devam Et' butonuna bas."
+[Bu mesajı yazdıktan sonra otomatik olarak Stage 2'ye döneceksin]
+
+===== KRITIK KURAL: YÜKSEK PUANLAR DA GELİŞİM ALANI OLABİLİR! =====
 🔴 ÇOK ÖNEMLİ: Hem DÜŞÜK (0-25) hem YÜKSEK (75-100) puanlar gelişim alanı yaratabilir!
 
 YÜKSEK PUAN GELİŞİM ALANI ÖRNEKLERI:
