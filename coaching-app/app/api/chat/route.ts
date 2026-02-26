@@ -23,7 +23,19 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
+// Manuel puan değiştirme kontrolü
+if ((state.stage === 3 || state.stage === 4)) {
+  const wantsToEdit = /değiştir|degistir|düzelt|duzelt|yanlış|yanlis|hayır|hayir/i.test(message);
+  
+  if (wantsToEdit) {
+    state.stage = 2;
+    
+    return NextResponse.json({
+      response: "Tamam! Seni puanları girdiğin sayfaya geri gönderiyorum. Puanlarını düzelt ve 'Devam Et' butonuna bas.",
+      state: state
+    });
+  }
+}
     // Use provided attitude or default
     const coachAttitude = attitude || DEFAULT_ATTITUDE;
 
