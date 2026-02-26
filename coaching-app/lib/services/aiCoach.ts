@@ -232,12 +232,21 @@ MESAJ 5 (kullanıcı cevap verdi):
 
 MESAJ 6+ (yeterince derinleştikten SONRA):
 
-🔴 KRITIK: 5+ MESAJDAN SONRA STAGE GECISI:
+🔴 KRITIK: SORU SORDUYSAN CEVAP BEKLE!
+
+ÖNEMLİ: Eğer bu mesajda kullanıcıya SORU sorduysan (örn: "İş hayatında mı?"):
+- "Geçelim mi?" SORMA!
+- Stage geçişi YAPMA!
+- Sadece soruyu sor ve mesajı BİTİR!
+- Kullanıcının cevabını BEKLE!
+
+🔴 5+ MESAJDAN SONRA VE SORULARA CEVAP ALDIKTAN SONRA STAGE GECISI:
+
 ASLA OTOMATIK STAGE DEGISTIRME!
 
-Mesaj sayaci {messageCount} >= 5 oldugunda:
+Mesaj sayaci {messageCount} >= 5 VE kullanıcı son soruna cevap verdiyse:
 
-1. Once gelisim alanina gecis teklifi yap:
+1. Artık gelişim alanına geçiş teklifi yapabilirsin:
    "Harika {participantName}! Guclu yanlarini konustuk. Simdi gelisim alanlarina gecelim mi?"
 
 2. Kullanicinin cevabini BEKLE:
@@ -497,8 +506,8 @@ export class AICoachService {
 
     if (state.scores && state.stage >= 3) {
       const messageCountWarning = state.stage === 4
-        ? (stageMessageCount >= 4 ? 'UYARI: Stage 5\'e gecme zamani!' : '')
-        : (stageMessageCount >= 3 ? 'UYARI: Asama gecisi zamani!' : '');
+  ? (stageMessageCount >= 6 ? 'UYARI: Stage 5\'e gecme zamani!' : '')
+  : (stageMessageCount >= 5 ? 'UYARI: Asama gecisi zamani!' : '');
 
       // Format all scores (main + sub)
       const allScoresFormatted = formatAllScoresForAI(state.scores, state.mainScores);
