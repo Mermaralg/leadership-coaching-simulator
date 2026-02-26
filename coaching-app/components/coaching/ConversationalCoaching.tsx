@@ -115,17 +115,15 @@ export default function ConversationalCoaching() {
       if (!response.ok) throw new Error('Failed to get response');
 
       const data = await response.json();
-      const assistantMsg: Message = { role: 'assistant', content: data.response };
+     const assistantMsg: Message = { role: 'assistant', content: data.response };
 
-   if (data.state.stage !== coachingState.stage) {
+if (data.state.stage !== coachingState.stage) {
   if (data.state.stage < coachingState.stage) {
     previousStage();
   } else {
     nextStage();
   }
   
-  // If going forward, proceed normally
-  nextStage();
   setMessages([assistantMsg]);
 
   const stageMarker: Message = {
@@ -133,16 +131,16 @@ export default function ConversationalCoaching() {
     content: `--- ${STAGE_TITLES[data.state.stage]} ---`
   };
   setAllMessages(prev => [...prev, stageMarker, assistantMsg]);
+} else {
+  setMessages([...updatedMessages, assistantMsg]);
+  setAllMessages(prev => [...prev, assistantMsg]);
 }
-      } else {
-        setMessages([...updatedMessages, assistantMsg]);
-        setAllMessages(prev => [...prev, assistantMsg]);
-      }
 
-      setCoachingState(data.state);
+setCoachingState(data.state);
 
-      if (data.state.stage === 6) {
-        setSessionComplete(true);
+if (data.state.stage === 6) {
+  setSessionComplete(true);
+}
       }
     } catch (error) {
       console.error('Error sending message:', error);
