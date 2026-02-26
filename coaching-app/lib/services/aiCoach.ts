@@ -614,8 +614,8 @@ GENEL KURALLAR:
       }
     }
 
-    // Stage 3: Score edit request - go back to Stage 2
-    if (state.stage === 3) {
+    // Stage 3 OR 4: Score edit request - go back to Stage 2
+if (state.stage === 3 || state.stage === 4) {
       const wantsToEdit = /hayır|hayir|değiştir|degistir|yanlış|yanlis|hatalı|hatali|düzelt|duzelt/i.test(userMessage);
       const aiConfirmedReturn = /puanları girdiğin sayfaya|puanlari girdigin sayfaya|geri gönderiyorum|geri gonderiyorum/i.test(assistantMessage);
       
