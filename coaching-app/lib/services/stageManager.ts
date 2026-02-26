@@ -190,13 +190,18 @@ function evaluateStage3Transition(
     };
   }
 
-  // Check if AI is already asking about development focus (strong signal)
+  /// AI soru sorsa bile, kullanıcı "evet" demedikçe geçme!
   if (aiAsksAboutNextTopic(lastAIResponse, 3)) {
-    return {
-      shouldTransition: true,
-      nextStage: 4,
-      reason: 'AI asking about development focus'
-    };
+    // Kullanıcı onay verdiyse geç
+    const userConfirmed = matchesAnyPattern(lastUserMessage, CONFIRMATION_PATTERNS);
+    
+    if (userConfirmed) {
+      return {
+        shouldTransition: true,
+        nextStage: 4,
+        reason: 'AI asked AND user confirmed transition'
+      };
+    }
   }
 
   // Check if user confirmed understanding after minimum exchanges
