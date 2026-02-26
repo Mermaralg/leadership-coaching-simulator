@@ -651,7 +651,14 @@ if (state.stage === 3 || state.stage === 4) {
         newState.stage = 2; // Go back to score entry!
       }
     }
-
+// Stage 3 → 4 geçişini SADECE kullanıcı onay verince izin ver
+    if (state.stage === 3 && newState.stage === 4) {
+      const userWantsTransition = /evet|tamam|geçelim|gecelim|olur|başla|haydi/i.test(userMessage.toLowerCase());
+      
+      if (!userWantsTransition) {
+        newState.stage = 3; // Force Stage 3!
+      }
+    }
     return newState;
   }
 
