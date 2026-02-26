@@ -55,6 +55,15 @@ if (state.stage === 3) {
       coachAttitude
     );
 
+    // AI Stage 3'ten 4'e geçtiyse VE kullanıcı onay vermemişse, geri al!
+if (state.stage === 3 && updatedState.stage === 4) {
+  const userWantsTransition = /evet|tamam|geçelim|gecelim|olur|başla|haydi/i.test(message.toLowerCase());
+  
+  if (!userWantsTransition) {
+    console.log('⚠️ AI Stage 4e gecti ama kullanici onay vermedi - geri aliyoruz!');
+    updatedState.stage = 3;
+  }
+}
     // Validate response
     let validationResult;
     if (state.scores) {
