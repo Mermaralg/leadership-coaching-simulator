@@ -181,8 +181,8 @@ function evaluateStage3Transition(
     return { shouldTransition: false };
   }
 
-  // Force transition after 5 exchanges to prevent getting stuck
-  if (messageCount >= 5) {
+ // Force transition after 8 exchanges (increased from 5)
+  if (messageCount >= 8) {
     return {
       shouldTransition: true,
       nextStage: 4,
@@ -204,12 +204,12 @@ function evaluateStage3Transition(
     }
   }
 
-  // Check if user confirmed understanding after minimum exchanges
-  if (messageCount >= 3) {
-    const userConfirmed = matchesAnyPattern(lastUserMessage, CONFIRMATION_PATTERNS);
+  // SADECE açık geçiş kelimeleri ile geç (genel "tamam" ile değil)
+  if (messageCount >= 5) {
+    const explicitTransition = /\b(geçelim|gecelim|evet.*geç|olur.*geç|başla)\b/i.test(lastUserMessage);
     const userMentionedArea = matchesAnyPattern(lastUserMessage, DEVELOPMENT_AREA_MENTIONS);
     
-    if (userConfirmed || userMentionedArea) {
+    if (explicitTransition || userMentionedArea) {
       return {
         shouldTransition: true,
         nextStage: 4,
