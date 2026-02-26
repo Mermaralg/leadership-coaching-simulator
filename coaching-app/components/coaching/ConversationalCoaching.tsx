@@ -14,7 +14,7 @@ const STAGE_TITLES: Record<number, string> = {
 };
 
 export default function ConversationalCoaching() {
-  const { session, nextStage, coachAttitude, setCoachAttitude } = useCoaching();
+ const { session, nextStage, previousStage, coachAttitude, setCoachAttitude } = useCoaching();
   const [messages, setMessages] = useState<Message[]>([]);
   const [allMessages, setAllMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -117,11 +117,11 @@ export default function ConversationalCoaching() {
       const data = await response.json();
       const assistantMsg: Message = { role: 'assistant', content: data.response };
 
-    if (data.state.stage !== coachingState.stage) {
-  // If going backwards (e.g., Stage 4 → 2), reload page
+   if (data.state.stage !== coachingState.stage) {
   if (data.state.stage < coachingState.stage) {
-    window.location.reload();
-    return;
+    previousStage();
+  } else {
+    nextStage();
   }
   
   // If going forward, proceed normally
