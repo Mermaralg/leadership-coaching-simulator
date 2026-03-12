@@ -80,7 +80,7 @@ export class ResponseValidator {
   validateStage6Response(response: string): ValidationResult {
     const errors: string[] = [];
 
-    const hasModelSolution = response.includes('MODEL') && response.includes('OZUM');
+    const hasModelSolution = response.includes('MODEL') && response.includes('COZUM');
     const hasModelSolutionAlt = response.toLowerCase().includes('model') && response.toLowerCase().includes('çözüm');
     if (!hasModelSolution && !hasModelSolutionAlt) {
       errors.push('Model solution section missing');
