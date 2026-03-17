@@ -55,7 +55,8 @@ if ((state.stage === 3 || state.stage === 4)) {
 }
     // Stage 3 geçiş kontrolü - Kullanıcı onayı zorunlu
 if (state.stage === 3) {
-  const userWantsTransition = /evet|tamam|geçelim|gecelim|olur|başla|haydi/i.test(message.toLowerCase());
+  const isInitMsg = message === '__STAGE_INIT__' || message === 'Basla';
+  const userWantsTransition = !isInitMsg && /\bevet\b|\btamam\b|\bgeçelim\b|\bgecelim\b|\bolur\b|\bhaydi\b/i.test(message.toLowerCase());
   
   // Kullanıcı açıkça "evet" demeden Stage 4'e geçmeyi ENGELLE
   if (!userWantsTransition) {
@@ -74,7 +75,7 @@ if (state.stage === 3) {
 
     // AI Stage 3'ten 4'e geçtiyse VE kullanıcı onay vermemişse, geri al!
 if (state.stage === 3 && updatedState.stage === 4) {
-  const userWantsTransition = /evet|tamam|geçelim|gecelim|olur|başla|haydi/i.test(message.toLowerCase());
+  const userWantsTransition = /\bevet\b|\btamam\b|\bgeçelim\b|\bgecelim\b|\bolur\b|\bhaydi\b/i.test(message.toLowerCase());
   
   if (!userWantsTransition) {
     console.log('⚠️ AI Stage 4e gecti ama kullanici onay vermedi - geri aliyoruz!');
