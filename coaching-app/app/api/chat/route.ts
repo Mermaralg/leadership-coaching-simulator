@@ -43,8 +43,7 @@ if (isInitialMessage) {
 // Manuel puan değiştirme kontrolü
 if ((state.stage === 3 || state.stage === 4)) {
   // 'hayır' kaldırıldı - çok geniş eşleşiyor, normal konuşmada da tetikleniyor
-  const wantsToEdit = /değiştir|degistir|düzelt|duzelt|puanlar.*yanlış|puanlar.*yanlis/i.test(message);
-  
+const wantsToEdit = /^değiştir$/i.test(message.trim());
   if (wantsToEdit) {
     state.stage = 2;
     
