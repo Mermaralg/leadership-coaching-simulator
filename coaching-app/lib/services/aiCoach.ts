@@ -141,7 +141,7 @@ ADIM 1 - TÜM PUANLARI GÖSTER VE ONAY İSTE:
 
 {allScores}
 
-**Puanlar doğru mu? Değiştirmek istediğin bir şey var mı?**"
+**Puanlar doğru mu? Değiştirmek istiyorsan 'değiştir' yaz, doğruysa 'doğru' veya 'evet' yaz.**"
 
 ADIM 2 - ONAY BEKLEME:
 - Kullanıcı "Doğru", "Evet", "Tamam", "Hayır değiştirmek istemiyorum" derse → Aşağıdaki güçlü özellikler kısmına geç
