@@ -42,7 +42,7 @@ if (isInitialMessage) {
 
 // Manuel puan değiştirme kontrolü
 if ((state.stage === 3 || state.stage === 4)) {
-  const wantsToEdit = /değiştir|degistir|düzelt|duzelt|yanlış|yanlis|hayır|hayir/i.test(message);
+const wantsToEdit = /^değiştir$|puanlar.*değiştir|puanlar.*düzelt|puanlar.*yanlış/i.test(message.trim());
   
   if (wantsToEdit) {
     state.stage = 2;
