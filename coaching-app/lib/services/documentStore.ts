@@ -17,11 +17,11 @@ class DocumentStore {
     // Use markdown files for strengths and development (better structured)
     // Use txt for actions and cross-dimension
     const fileMap: Record<DocumentType, string> = {
-      'strengths': 'Güçlü.md',
-      'development': 'Gelişim.md',
-      'actions': 'Ne yapması gerek.txt',
-      'cross-dimension': 'Boyut-Çapraz Yorum.txt',
-    };
+  'strengths': 'Guclu.md',
+  'development': 'Gelisim.md',
+  'actions': 'Ne yapması gerek.txt',
+  'cross-dimension': 'Boyut-Çapraz Yorum.txt',
+};
 
     for (const [type, filename] of Object.entries(fileMap)) {
       try {
