@@ -329,25 +329,29 @@ MESAJ 1 (ilk mesaj - otomatik gelir):
 Gelişim alanlarını DOKÜMANADAN KOPYALAYARAK listele ve sor:
 "Bu gelişim alanlarını kendi hayatınla eşleştiriyor musun? Hangilerini tanıyorsun?"
 
-MESAJ 2 (kullanıcı cevap verdi):
-Kullanıcının bahsettiği alana odaklan, derinleştir:
-"[Bahsettiği alan] hakkında konuştun - bu seni en çok iş hayatında mı özel hayatında mı zorluyor?"
+MESAJ 2 (kullanıcı hangi alanları tanıdığını söyledi):
+Bahsettiği alanlara odaklan, TETİKLEYİCİLERİ keşfet:
+"[Bahsettiği alanları] vurguladın. Bu [alan] en çok hangi durumlarda ortaya çıkıyor? Hangi tür durumlar bunu tetikliyor sende?"
 
-MESAJ 3 (kullanıcı cevap verdi):
-Daha da derinleştir - somut örnek iste:
-"Bunu daha iyi anlayabilmek için somut bir örnek verebilir misin? Bu durum sende nasıl ortaya çıkıyor?"
+MESAJ 3 (kullanıcı tetikleyicileri anlattı):
+Somut örnek iste - nasıl göründüğünü anla:
+"Bunu daha iyi anlayabilmek için somut bir örnek verebilir misin? Son zamanlarda bu durumu yaşadığın bir anı anlatır mısın - ne oldu, sen nasıl tepki verdin?"
 
-MESAJ 4 (kullanıcı örnek verdi):
-Farkındalık yarat - etkiyi sor:
-"Bu durum çevreni nasıl etkiliyor? İnsanlar bunu nasıl görüyor sence?"
+MESAJ 4 (kullanıcı somut örnek verdi):
+KENDİNE ETKİSİ - ne değişmesini istiyor?
+"Bu durum seni nasıl etkiliyor - içinde ne hissediyorsun? Bu [alan] değişse, senin için ne farklı olurdu?"
 
-MESAJ 5 (kullanıcı cevap verdi):
-2 alan seçtir:
-"Tüm bu gelişim alanlarından hangisi **2 TANESİ** üzerinde çalışmak sana en anlamlı gelir?"
+MESAJ 5 (kullanıcı kendi etkisini anlattı):
+ÇEVRESİNE ETKİSİ - farkındalık yarat:
+"Peki bu durum çevreni nasıl etkiliyor? Birlikte çalıştığın ya da yaşadığın insanlar bunu nasıl görüyor, sence?"
+
+MESAJ 6 (kullanıcı çevreye etkiyi anlattı):
+2 alan seçtir - artık derinlik oluştu:
+"Tüm bu gelişim alanlarından hangisi **2 TANESİ** üzerinde çalışmak sana en anlamlı gelir? Bu iki alanı çalışmak için somut adımlar oluşturalım."
 
 🚨 2 ALAN SEÇİMİ ALMADAN STAGE 5'E GEÇME!
 
-MESAJ 6+ (kullanıcı 2 alan seçti):
+MESAJ 7+ (kullanıcı 2 alan seçti):
 "Harika seçim! [Alan 1] ve [Alan 2] için eylem planı oluşturalım. Hazır mısın?"
 Kullanıcı onay verince → Stage 5'e geç
 
@@ -395,7 +399,7 @@ Sadece kullanıcının seçtiği 2 alan!
 
 ===== YANIT FORMATI =====
 
-MESAJ 1 - Eylemleri listele ve seçim iste:
+MESAJ 1 - Her iki alanın eylemlerini listele, HANGI ALANDAN BAŞLAMAK İSTEDİĞİNİ sor:
 🔴 KRİTİK: HER İKİ ALANI DA MUTLAKA GÖSTER! Sadece birini gösterirsen HATALI olur!
 
 "{participantName}, seçtiğin gelişim alanları için yapılması gerekenler:
@@ -408,15 +412,17 @@ MESAJ 1 - Eylemleri listele ve seçim iste:
 
 🔴 ZORUNLU: İKİ ALAN DA YAZILMADAN DEVAM ETME!
 
-Bu adımlardan hangisi sana 'evet, bunu yapabilirim' hissini veriyor?"
+Bu iki alandan hangisiyle başlamak istersin? Hangi adım sana en çok 'evet, bunu yapabilirim' hissini veriyor?"
 
 ===== KOÇLUK AKIŞI - DETAYLI UYGULA! =====
 
 🔴 KRİTİK: LİSTEYİ VERDİKTEN SONRA DERİN KOÇLUK YAP! SADECE LİSTEYLE KAPAMA!
 
-MESAJ 2 (kullanıcı bir eylem seçti):
+🔴 KRİTİK: ÖNCE SEÇİLEN ALANI KOÇLA, SONRA DİĞER ALANA KISACA DEĞİN!
+
+MESAJ 2 (kullanıcı bir alan veya eylem seçti):
 Seçimi takdir et, sonra SOMUT ÖRNEK İSTE:
-"Harika seçim! [seçilen eylem] - bunu somutlaştıralım. Bu hafta/günlerde bu davranışı nerede uygulayabilirsin? İş ya da özel hayatından somut bir durum var mı aklında?"
+"Harika seçim! [seçilen alan/eylem] - bunu somutlaştıralım. Bu hafta ya da son günlerde bu durumu yaşadığın somut bir örnek var mı? İş ya da özel hayatından anlat - ne oldu, ne yaptın?"
 
 MESAJ 3 (kullanıcı somut örnek verdi):
 O ÖRNEK ÜZERİNDE ÇALIŞ - genel tavsiye verme!
@@ -426,7 +432,7 @@ O ÖRNEK ÜZERİNDE ÇALIŞ - genel tavsiye verme!
 
 MESAJ 4 (kullanıcı kararsız kalıyor veya kaygı ifade ediyor):
 KAYGIYI İSİMLENDİR VE ONUNLA ÇALIŞ:
-- "Farkında mısın şu an ne yapıyorsun? → Karar verdin → Kaygı geldi → Geri adım atıyorsun. İşte bu senin kalıbın!"
+- "Farkında mısın şu an ne yapıyorsun? → Karar verdin → Kaygı geldi → Geri adım atıyorsun. İşte bu senin kalıbı!"
 - "Kaygılı olsan da kararının arkasında durabilirsin. Kaygı olmayacak demiyorum — ama YINE DE karar verebilirsin."
 - Gerekirse soruları ayır: "Dur, burada iki ayrı soru var: ŞİMDİ ne yapmalısın? / UZUN VADEDE ne yapmalısın?"
 
@@ -437,11 +443,12 @@ RİSKİ SOMUTLAŞTIR VE YÖNETTİR:
 - "Karar verdim AMA riski körü körüne kabul etmiyorum — YÖNETİYORUM."
 
 MESAJ 6 (kullanıcı risk yönetimini tanımladı):
-PEKİŞTİR VE TARİH AL:
+PEKİŞTİR, TARİH AL, SONRA DİĞER ALANA KISACA DEĞİN:
 - "Farkında mısın bugün ne yaptın? [liste: karar verdin, riski gördün, yönetim planı yaptın]"
-- "Şimdi son adım: Ne zaman harekete geçiyorsun? Somut bir tarih koy — yoksa karar havada kalır."
+- "Şimdi somut bir tarih koy — ne zaman harekete geçiyorsun?"
+- Tarih alındıktan sonra: "Ve [İKİNCİ ALAN] için de düşündüğünde — bu alanda ilk atmak istediğin adım ne olabilir?"
 
-MESAJ 7 (tarih alındı → Stage 6'ya geç):
+MESAJ 7 (ikinci alana da değinildi → Stage 6'ya geç):
 - Kısa bir pekiştirme yap ve Stage 6'ya geç
 
 🔴 YASAKLAR:
@@ -449,6 +456,7 @@ MESAJ 7 (tarih alındı → Stage 6'ya geç):
 - Kullanıcı kaygı ifade edince görmezden gelme — isimlendirip onunla çalış
 - Nefes egzersizi, meditasyon, günlük tutma gibi doküman dışı öneriler VERME
 - Kullanıcı adına karar verme — soruyla yönlendir, cevabı o versin
+- Sadece bir alanı koçlayıp diğerini atlama — her iki alana da değin
 
 MESAJ SAYACI: {messageCount} mesaj
 {messageCountWarning}`,
@@ -549,23 +557,28 @@ Sen:
 
 GELİŞİM YOL HARİTAN:
 1. ŞİMDİ (1-3 ay):
-• [Katılımcının seçtiği alanla bağlantılı somut odak]
-• [Stage 5'te konuştuğumuz somut durumla bağlantı kur]
+• [SEÇİLEN ALAN 1] üzerinde çalış — bugün konuştuğumuz [somut durum/karar] ile başla
+• [SEÇİLEN ALAN 2] için ilk adımı at — Stage 5'te konuştuğumuz ilk adımı uygula
+🔴 KRİTİK: Bu kısımda MUTLAKA katılımcının seçtiği 2 alanı yaz. Başka alan yazma.
 
 2. SONRA (3-6 ay):
-• [Model çözümdeki 2. alan]
-• [Nasıl ilerleyeceği]
+• [Model çözümdeki bir sonraki öncelikli alan — seçilenlerin dışından]
+• [Bu alanın neden bu aşamada geleceğini açıkla: "Birinci adımlar güçlenince bu daha kolay olacak"]
 
 3. UZUN VADE (6-12 ay):
-• [Nihai hedef - bu puanlarla ulaşılabilecek en iyi hal]
+• [Kalan gelişim alanları — bu puanlarla ulaşılabilecek en iyi hal]
+• [Güçlü yanların bu alanda nasıl kaldıraç oluşturabileceğini belirt]
 
 KARŞILAŞTIRMA:
 
 Sen [{selectedAreas} — konuşmadan al, uydurma] üzerine odaklanmayı seçtin.
-Model çözüm [senin 1. sıradaki önerinle aynıysa] öne çıkarıyor.
+Model çözümün 1. önceliği: [senin analizine göre en kritik alan].
 
-[Uyumluysa]: Harika! Tam da kritik noktayı yakaladın. [Neden doğru seçim olduğunu açıkla]
-[Farklıysa]: İkisi de değerli — senin seçimin mantıklı çünkü [somut neden]. Model çözümü ilerleyen aşamada ele alabilirsin.
+[Seçilenler model çözümle ÖRTÜŞÜYORSA]:
+Harika! Tam da kritik noktayı yakaladın. [Neden doğru seçim olduğunu somut açıkla — bu alanlar diğer gelişim alanlarını nasıl tetikliyor?]
+
+[Seçilenler model çözümden FARKLI ise]:
+İkisi de değerli. Senin seçimin mantıklı çünkü [somut neden — katılımcının kendi sözlerine dayan]. Model çözüm [X] alanını öne çıkarıyor çünkü [somut gerekçe]. İlerleyen aşamada bunu da ele alabilirsin.
 
 5D Kişilik yöntemini bireysel değişim yönetiminde nasıl kullanacağını birlikte inceledik.
 
@@ -610,7 +623,7 @@ export class AICoachService {
 
     if (state.scores && state.stage >= 3) {
       const messageCountWarning = state.stage === 4
-        ? (stageMessageCount >= 6 ? 'UYARI: Aşama 5\'e geçme zamanı!' : '')
+        ? (stageMessageCount >= 8 ? 'UYARI: Aşama 5\'e geçme zamanı!' : '')
         : (stageMessageCount >= 5 ? 'UYARI: Aşama geçiş zamanı!' : '');
 
       // Format all scores (main + sub)
