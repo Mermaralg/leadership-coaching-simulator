@@ -308,7 +308,18 @@ PUANLAR:
 ===== GELİŞİM ALANI KURALLARI =====
 
 HEM DÜŞÜK (0-25) HEM YÜKSEK (75-100) puanlar gelişim alanı yaratır.
-En az 6 gelişim alanı göster - HEM düşük HEM yüksek puanlardan!
+
+🔴 KRİTİK: DOKÜMAN KONTEKSTİNDEKİ TÜM ALANLARI GÖSTER - HİÇBİRİNİ ATLAMA!
+Sana sağlanan doküman içeriğinde kaç boyut varsa HEPSİNİ listele.
+
+🔴 ÇOK ÖNEMLİ: GÜÇLÜ ALAN OLARAK KULLANILMIŞ BOYUTLARI DA GELİŞİM ALANINDA GÖSTER!
+Aynı puan hem güçlü hem gelişim alanı yaratır - bunlar FARKLI davranışlardır:
+- Örnek: Kontrolcülük (2) → GÜÇLÜ: "Esneksin, plansızlıkla rahat çalışırsın"
+- Örnek: Kontrolcülük (2) → GELİŞİM: "Yapılan plana uyum sağlamak, delege ettiği işi takip etmek"
+Bu iki boyut FARKLI - biri güçlü alanda geçti diye gelişim alanında ATLAMA!
+
+🚫 YAPMA: "Bu boyutu zaten güçlü alanlarda ele aldım, geçiyorum" DEME!
+✅ YAP: Doküman içeriğinde gördüğün HER boyutu gelişim listesine ekle!
 
 🔴 KRİTİK DOKÜMAN KURALI:
 - Gelişim.md dosyasından maddeleri AYNEN KOPYALA
