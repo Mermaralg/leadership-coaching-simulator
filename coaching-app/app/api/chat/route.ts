@@ -78,10 +78,28 @@ if (state.stage === 3) {
     // AI Stage 3'ten 4'e geçtiyse VE kullanıcı onay vermemişse, geri al!
 if (state.stage === 3 && updatedState.stage === 4) {
   const userWantsTransition = /\bevet\b|\btamam\b|\bgeçelim\b|\bgecelim\b|\bolur\b|\bhaydi\b/i.test(message.toLowerCase());
-  
+
   if (!userWantsTransition) {
     console.log('⚠️ AI Stage 4e gecti ama kullanici onay vermedi - geri aliyoruz!');
     updatedState.stage = 3;
+  }
+}
+
+// AI Stage 4'ten 5'e geçtiyse VE kullanıcı en az 2 gelişim alanı seçmemişse, geri al!
+if (state.stage === 4 && updatedState.stage === 5) {
+  const DEVELOPMENT_AREA_PATTERNS = [
+    /duygu\s*kontrol/i, /stres/i, /ozguven/i, /özgüven/i,
+    /risk/i, /kontrolculuk/i, /kontrolcülük/i, /kural/i,
+    /one\s*c[ıi]kma/i, /öne\s*çıkma/i, /sosyal/i, /basari/i, /başarı/i,
+    /iliski/i, /ilişki/i, /iyi\s*gecinme/i, /iyi\s*geçinme/i,
+    /kac[ıi]nma/i, /kaçınma/i, /yenilik/i, /ogrenme/i, /öğrenme/i, /merak/i,
+    /motivasyon/i, /karars[ıi]z/i, /yüzleş/i, /yuzles/i, /kaygı/i, /kaygi/i,
+  ];
+  const mentionedAreaCount = DEVELOPMENT_AREA_PATTERNS.filter(p => p.test(message)).length;
+
+  if (mentionedAreaCount < 2) {
+    console.log('⚠️ AI Stage 5e gecti ama kullanici 2 alan secmedi - geri aliyoruz!');
+    updatedState.stage = 4;
   }
 }
     // Validate response

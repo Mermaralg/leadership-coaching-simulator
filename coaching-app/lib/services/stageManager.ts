@@ -222,12 +222,12 @@ function evaluateStage3Transition(
 
 /**
  * Stage 4 → 5: Development Focus → Action Planning
- * 
- * Criteria:
- * - User has selected or indicated focus areas OR
- * - AI is asking about actions/what to do OR
- * - User explicitly mentions wanting to work on something
- * - Maximum 6 exchanges
+ *
+ * Criteria (strict - must satisfy ALL):
+ * - Minimum 6 exchanges (full exploration flow: list → triggers → example → self-impact → other-impact → selection ask)
+ * - AI must have explicitly asked for 2-area selection in its last message
+ * - User must have named at least 2 development areas in their response
+ * - Maximum 9 exchanges (force transition)
  */
 function evaluateStage4Transition(
   state: CoachingState,
@@ -235,13 +235,13 @@ function evaluateStage4Transition(
   lastAIResponse: string,
   messageCount: number
 ): StageTransitionResult {
-  // Need at least 1 exchange in this stage
-  if (messageCount < 1) {
+  // Need at least 6 exchanges before selection is possible
+  if (messageCount < 6) {
     return { shouldTransition: false };
   }
 
-  // Force transition after 6 exchanges
-  if (messageCount >= 6) {
+  // Force transition after 9 exchanges
+  if (messageCount >= 9) {
     return {
       shouldTransition: true,
       nextStage: 5,
@@ -249,26 +249,25 @@ function evaluateStage4Transition(
     };
   }
 
-  // Check if AI is asking about actions
-  if (aiAsksAboutNextTopic(lastAIResponse, 4)) {
-    return {
-      shouldTransition: true,
-      nextStage: 5,
-      reason: 'AI asking about action planning'
-    };
-  }
+  // Only transition when the AI explicitly asked for 2-area selection
+  // AND the user named at least 2 development areas in response
+  const aiAskedFor2Areas =
+    /2\s*tane/i.test(lastAIResponse) ||
+    /iki\s*(alan|konu|tanesini)/i.test(lastAIResponse) ||
+    /hangisi.*2.*alan/i.test(lastAIResponse) ||
+    /2\s*(alan|konu)\s*(se[cç]|belirle)/i.test(lastAIResponse);
 
-  // Check if user has made selections (strong signal after 2+ exchanges)
-  if (messageCount >= 2) {
-    const userSelected = matchesAnyPattern(lastUserMessage, SELECTION_PATTERNS);
-    const userMentionedAreas = matchesAnyPattern(lastUserMessage, DEVELOPMENT_AREA_MENTIONS);
-    const userConfirmed = matchesAnyPattern(lastUserMessage, CONFIRMATION_PATTERNS);
-    
-    if (userSelected || (userMentionedAreas && userConfirmed)) {
+  if (aiAskedFor2Areas) {
+    // Count distinct development areas the user mentioned
+    const mentionedAreaCount = DEVELOPMENT_AREA_MENTIONS.filter(pattern =>
+      pattern.test(lastUserMessage)
+    ).length;
+
+    if (mentionedAreaCount >= 2) {
       return {
         shouldTransition: true,
         nextStage: 5,
-        reason: 'User selected development areas'
+        reason: 'AI asked for 2 areas AND user named at least 2 development areas'
       };
     }
   }
