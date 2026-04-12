@@ -183,6 +183,9 @@ ${this.getDocument('actions')}
 
       case 6: // Summary
         return `
+=== NE YAPMASI GEREK DOKÜMANI (Model Çözüm bullet pointları için kullan — AYNEN KOPYALA) ===
+${this.getDocument('actions')}
+
 === CAPRAZ BOYUT ANALIZI ===
 ${this.getDocument('cross-dimension')}
 `;

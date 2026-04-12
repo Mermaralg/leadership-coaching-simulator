@@ -567,10 +567,15 @@ Ne kadar uyumlu? Farklılık varsa, katılımcının seçimi neden mantıklı?
 
 UYARI 1 — KONUŞMADAN AL, KESİNLİKLE UYDURMA:
 "Sen:" bölümünde SADECE katılımcının bu konuşmada kelimesi kelimesine söylediği şeyleri yaz.
-Katılımcının söylediği tam cümleyi yaz — parafraz bile yapma.
-Örnek YANLIŞ: "Bugün akşam kendini gözlemlemeye başlayacağına karar verdin" ← katılımcı bunu söylemediyse YAZMA
-Örnek DOĞRU: Katılımcı "bu hafta o kişiyle konuşmak istiyorum" dediyse AYNEN bunu yaz.
-Uydurulmuş taahhüt veya karar = ağır hata. Konuşma geçmişini kelime kelime kontrol et.
+Konuşma geçmişine git ve kullanıcının mesajlarını tek tek kontrol et.
+
+TAAHHÜT KONTROLÜ:
+- Katılımcı somut tarih verdiyse (yarın, bu hafta, Cuma vb.) → AYNEN yaz
+- Katılımcı somut tarih VERMEDİYSE → "Bu oturumda somut bir tarih belirlenmedi" yaz. UYDURMA.
+- "Bugün akşam gözlemleyeceğim", "rutin oluşturacağım" gibi katılımcının söylemediği taahhütleri YAZMA.
+
+Örnek YANLIŞ: "Bugün akşam kendini gözlemlemeye başlayacağına karar verdin" ← kullanıcı bunu söylemediyse KESİNLİKLE YAZMA
+Örnek DOĞRU: "Bu kişi tekrar hata yaptığında net konuşacağını belirtin" ← kullanıcı bunu söylediyse AYNEN yaz
 
 UYARI 2 — SEÇİLEN ALANLARI DOĞRU YAZ:
 Katılımcının Stage 4'te seçtiği 2 alan: {selectedAreas}
@@ -602,6 +607,12 @@ Sen:
 
 ÇOK DÜŞÜK PUANLAR (0-25):
 [ALT BOYUTLARDAN gerçekten 0-25 olanları listele - örn: Başarı Yönelimi: 1, Kontrolcülük: 2]
+
+🔗 ANA BOYUT ÖRÜNTÜSÜ:
+🔴 ZORUNLU — BU BÖLÜMÜ MUTLAKA YAZ, ATLATMA:
+[Çapraz Boyut dokümanını kullanarak ana boyutların etkileşimini 2-3 cümleyle açıkla]
+Format: "[ANA BOYUT] yüksek + [ANA BOYUT] düşük → [DOKÜMAN YORUMU]"
+Örn: "Dengeli İlişki çok yüksek + Duygusal Denge düşük → Çatışmalardan kaçınır, suçluluk duyabilir, dolaylı tepkiler verir."
 
 🎯 ÖNCELİKLİ GELİŞİM ALANLARI (Model Çözüm):
 

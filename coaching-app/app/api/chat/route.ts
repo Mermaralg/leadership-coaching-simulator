@@ -193,6 +193,29 @@ if (state.stage === 5 && updatedState.stage === 6) {
     }
 
     // ======================================================
+    // KRİTİK FIX: Stage 4 → 5 geçişinde AI cevabını override et
+    // Sorun: "tamam" mesajına Stage 5 AI doküman dışı eylem planı üretiyor,
+    // sonra __STAGE_INIT__ ile doğru liste de geliyor — çifte içerik oluşuyor.
+    // Çözüm: 4→5 geçişini sabit mesajla override et, içerik __STAGE_INIT__'e bırak.
+    // ======================================================
+    if (previousStage === 4 && updatedState.stage === 5) {
+      const participantName = updatedState.participantName || '';
+      const fixedTransitionResponse = `Harika ${participantName}! Şimdi eylem planı aşamasına geçiyoruz.`;
+
+      const history = updatedState.conversationHistory;
+      if (history.length > 0 && history[history.length - 1].role === 'assistant') {
+        history[history.length - 1].content = fixedTransitionResponse;
+      }
+
+      console.log('✅ Stage 4→5 geçiş mesajı override edildi');
+
+      return NextResponse.json({
+        response: fixedTransitionResponse,
+        state: updatedState,
+      });
+    }
+
+    // ======================================================
     // KRİTİK FIX: Stage 3 → 4 geçişinde AI cevabını override et
     // Sorun: Stage 3 AI "geçiyoruz" derken AYRICA gelişim alanlarını
     // listeliyordu (yanlış). Stage 4 initial message zaten doğru

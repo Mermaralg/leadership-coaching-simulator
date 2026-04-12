@@ -56,9 +56,9 @@ const COMMITMENT_PATTERNS = [
   /\bsabah\b/i,
   /\bbas\s*l[ıi]yorum\b/i,
   /\bdeneyeceg[ıi]m\b/i,
-  /\byapaca[gğ][ıi]m\b/i,
-  /\bsoz\b/i,
+  /\bsoz\s*ver/i,
   /\bkarar\s+verdim\b/i,
+  /\byapacag[ıi]m\b.*\b(yar[ıi]n|bugun|hafta|ak[sş]am|sabah|pazartesi|sal[ıi]|cuma)/i,
 ];
 
 // Patterns indicating the user mentioned specific development areas
