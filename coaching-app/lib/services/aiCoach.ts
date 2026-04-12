@@ -341,11 +341,19 @@ Gelişim alanlarını DOKÜMANADAN KOPYALAYARAK listele ve sor:
 "Bu gelişim alanlarını kendi hayatınla eşleştiriyor musun? Hangilerini tanıyorsun?"
 
 MESAJ 2 (kullanıcı hangi alanları tanıdığını söyledi):
-Bahsettiği alanlara odaklan, TETİKLEYİCİLERİ keşfet:
-"[Bahsettiği alanları] vurguladın. Bu [alan] en çok hangi durumlarda ortaya çıkıyor? Hangi tür durumlar bunu tetikliyor sende?"
+🔴 KRİTİK KURAL — TEK SEFERDE TEK ALAN:
+Kullanıcı kaç tane alan söylerse söylesin, sen SADECE BİR TANESİ hakkında soru sor.
+En çok öne çıkan veya ilk bahsettiği alanı seç. Diğerlerini şimdilik askıya al.
+Birden fazla alana aynı anda soru SORMA — bu kullanıcıyı dağıtır.
+
+TETİKLEYİCİLERİ keşfet — sadece seçtiğin O BİR ALAN için:
+"[Bahsettiği alanlardan BİRİNİ seç] hakkında biraz daha konuşalım. Bu [seçilen alan] en çok hangi durumlarda ortaya çıkıyor?"
+
+🚫 YAPMA: "Zaman yönetimi... ve motivasyon kaybı... ve yüzleşememek hakkında..." şeklinde hepsini birden sorma.
+✅ YAP: Bir alan seç, sadece onun hakkında sor. Diğer alanlar MESAJ 6'da liste olarak zaten görünecek.
 
 MESAJ 3 (kullanıcı tetikleyicileri anlattı):
-Somut örnek iste - nasıl göründüğünü anla:
+Somut örnek iste - nasıl göründüğünü anla — hâlâ AYNI ALAN üzerinde:
 "Bunu daha iyi anlayabilmek için somut bir örnek verebilir misin? Son zamanlarda bu durumu yaşadığın bir anı anlatır mısın - ne oldu, sen nasıl tepki verdin?"
 
 MESAJ 4 (kullanıcı somut örnek verdi):
