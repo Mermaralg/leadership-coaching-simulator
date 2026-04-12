@@ -165,6 +165,11 @@ ${this.getContentForScores('strengths', scores)}
 === GELİŞİM ALANLARI DOKÜMANI (SADECE BU DOKÜMANI KULLAN) ===
 ${this.getDocument('development')}
 
+=== ÇAPRAZ BOYUT ETKİLEŞİMİ (GELİŞİM ALANLARINI DERİNLEŞTİRMEK İÇİN KULLAN) ===
+Bu doküman farklı ana boyut kombinasyonlarının yarattığı davranış kalıplarını gösterir.
+Koçluk sırasında "bu iki özellik bir arada olunca şu oluyor" bağlantısını kurmak için yararlan.
+${this.getDocument('cross-dimension')}
+
 === KATILIMCININ PUANLARINA GÖRE GELİŞİM ALANLARI ===
 UYARI: Aşağıdaki içeriği AYNEN kullan. Kendi cümlelerini EKLEME.
 ${this.getContentForScores('development', scores)}
