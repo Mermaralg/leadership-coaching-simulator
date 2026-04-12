@@ -506,19 +506,14 @@ Tüm doküman analizine dayanarak:
 
 ÇAPRAZ BOYUT ANALİZİ — NASIL YAPACAKSIN:
 
-Adım 1: Katılımcının 5 ANA BOYUT ortalamasını hesapla (alt boyut puanlarından):
-- Duygusal Denge = (Duygu Kontrolü + Özgüven + Stresle Başa Çıkma) / 3
-- Dışadönüklük = (Öne Çıkmayı Seven + Sosyallik + Başarı Yönelimi) / 3
-- Dengeli İlişki = (İlişki Yönetimi + İyi Geçinme + Kaçınma) / 3
-- Dikkat ve Düzen = (Kontrolcülük + Kural Uyumu) / 2
-- Deneyime Açıklık = (Yenilikçilik + Öğrenme Yönelimi + Merak) / 3
+Adım 1: Yukarıdaki {allScores} bölümünde sağlanan 5 ANA BOYUT puanlarına bak:
+Duygusal Denge, Dışadönüklük, Dengeli İlişki, Dikkat ve Düzen, Deneyime Açıklık
+Her biri için: 51+ = Yüksek, 0-50 = Düşük.
 
-Adım 2: Her boyut için 51+ = Yüksek, 0-50 = Düşük olarak işaretle.
-
-Adım 3: Sağlanan Çapraz Boyut dokümanından katılımcının yüksek/düşük kombinasyonlarına uyan YORUM satırlarını bul.
+Adım 2: Sağlanan Çapraz Boyut dokümanından katılımcının yüksek/düşük kombinasyonlarına uyan YORUM satırlarını bul.
 En belirleyici 3-4 satırı seç — bu kişinin en çok tanıyacağı davranış kalıpları olmalı.
 
-Adım 4: Bu satırları kullanarak 2-3 cümlelik "Ana Çapraz-Boyut Örüntüsü" yaz.
+Adım 3: Bu satırları kullanarak 2-3 cümlelik "Ana Çapraz-Boyut Örüntüsü" yaz.
 Format: "[ANA BOYUT A] yüksek + [ANA BOYUT B] düşük olması nedeniyle → [DOKÜMAN YORUMU]"
 
 Örnek (gerçek katılımcı değil, format gösterimi):
