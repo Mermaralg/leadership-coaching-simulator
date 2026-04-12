@@ -293,13 +293,13 @@ function evaluateStage5Transition(
     return { shouldTransition: false };
   }
 
-  // Need at least 3 exchanges - önce somut örnekle çalış
-  if (messageCount < 3) {
+  // Need at least 6 exchanges — iki alan için yeterli konuşma
+  if (messageCount < 6) {
     return { shouldTransition: false };
   }
 
-  // Force transition after 8 exchanges
-  if (messageCount >= 8) {
+  // Force transition after 12 exchanges
+  if (messageCount >= 12) {
     return {
       shouldTransition: true,
       nextStage: 6,
@@ -309,8 +309,8 @@ function evaluateStage5Transition(
 
   // Kullanıcı somut zaman taahhüdü verdi mi?
   const userCommitted = matchesAnyPattern(lastUserMessage, COMMITMENT_PATTERNS);
-  
-  if (userCommitted && messageCount >= 3) {
+
+  if (userCommitted && messageCount >= 6) {
     return {
       shouldTransition: true,
       nextStage: 6,

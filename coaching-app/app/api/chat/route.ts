@@ -102,6 +102,46 @@ if (state.stage === 4 && updatedState.stage === 5) {
     updatedState.stage = 4;
   }
 }
+// Stage 5→6 geçiş guard: İkinci gelişim alanı konuşulmadan geçişe izin verme
+if (state.stage === 5 && updatedState.stage === 6) {
+  const developmentAreas = state.developmentAreas || [];
+  const secondArea = developmentAreas[1];
+
+  if (secondArea) {
+    // Son 6 mesajda ikinci alanın adı geçiyor mu kontrol et
+    const recentMessages = (state.conversationHistory || [])
+      .slice(-6)
+      .map(m => m.content.toLowerCase())
+      .join(' ');
+
+    const areaKeywords: Record<string, RegExp[]> = {
+      duygu_kontrolu: [/duygu\s*kontrol/i, /duygular/i],
+      stresle_basa_cikma: [/stres/i],
+      ozguven: [/özgüven/i, /ozguven/i, /kendine\s*güven/i],
+      risk_duyarlilik: [/risk/i],
+      kontrolculuk: [/kontrolc/i, /planlama/i],
+      kural_uyumu: [/kural/i, /detay/i],
+      one_cikmayi_seven: [/öne\s*çık/i],
+      sosyallik: [/sosyal/i],
+      basari_yonelimi: [/başarı/i, /motivasyon/i],
+      iliski_yonetimi: [/ilişki\s*yönet/i],
+      iyi_gecinme: [/iyi\s*geçin/i, /uyum/i],
+      kacinma: [/kaçınma/i, /yüzleş/i, /kaçın/i],
+      yenilikcilik: [/yenilik/i],
+      ogrenme_yonelimi: [/öğrenme/i],
+      merak: [/merak/i],
+    };
+
+    const secondAreaPatterns = areaKeywords[secondArea] || [];
+    const secondAreaMentioned = secondAreaPatterns.some(p => p.test(recentMessages));
+
+    if (!secondAreaMentioned) {
+      console.log(`⚠️ Stage 6'ya geçiş engellendi — ikinci alan (${secondArea}) henüz konuşulmadı`);
+      updatedState.stage = 5;
+    }
+  }
+}
+
     // Validate response
     let validationResult;
     if (state.scores) {

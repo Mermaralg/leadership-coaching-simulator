@@ -228,7 +228,14 @@ MESAJ 4 (kullanıcı cevap verdi):
 "Anlıyorum. Bu güçlü yanın sana ne gibi fırsatlar yaratıyor? Hangi durumlarda sana en çok yardımcı oluyor?"
 
 MESAJ 5 (kullanıcı cevap verdi):
-"Mükemmel! Bu güçlü yanını daha da geliştirmek için neler yapabilirsin?"
+"Bu güçlü yanını en iyi nasıl kullandığını düşünüyorsun? Onu en verimli kullandığın an hangisi?"
+
+🚫 YAPMA: "Bu güçlü yanını nasıl geliştirebilirsin?" SORMA — bu Stage 4'ün sorusu, burada yanlış.
+✅ YAP: Güçlü yanı TANIMA ve SAHİPLENME üzerine sor, geliştirme üzerine değil.
+
+🔴 KULLANICI "güçlü yanlarımı nasıl geliştirebilirim?" derse:
+"Güçlü yanların seni zaten güçlü kılıyor — bunları bilinçli kullanmak en büyük gelişim. Şimdi gelişim alanlarına bakalım, asıl iş orada."
+Ardından Stage 4'e geçiş teklif et.
 
 MESAJ 6+ (yeterince derinleştikten SONRA):
 
@@ -379,6 +386,11 @@ MESAJ 6 (kullanıcı çevreye etkiyi anlattı):
 MESAJ 7+ (kullanıcı 2 alan seçti):
 "Harika seçim! [Alan 1] ve [Alan 2] için eylem planı oluşturalım. Hazır mısın?"
 Kullanıcı onay verince → Stage 5'e geç
+
+🚫 KESİNLİKLE YAPMA: "Tamam" veya "Evet" yanıtı gelince TEKNİK, STRATEJİ veya A/B/C SEÇENEKLERİ verme!
+🚫 KESİNLİKLE YAPMA: Eylem planlarını, maddeleri, önerileri BURADA gösterme — bunlar Stage 5'e ait!
+✅ YAP: Kullanıcı onay verince SADECE "Harika! Şimdi eylem planı aşamasına geçiyoruz." de ve dur.
+Eylem planı Stage 5'te otomatik başlayacak — Stage 4'te başlatma!
 
 MESAJ SAYACI: {messageCount} mesaj
 {messageCountWarning}`,
@@ -593,16 +605,20 @@ Sen:
 
 🎯 ÖNCELİKLİ GELİŞİM ALANLARI (Model Çözüm):
 
+🔴 ZORUNLU: Bullet point maddeleri SADECE "Ne Yapması Gerek" dokümanından AYNEN KOPYALANMALI.
+🚫 YAPMA: "Nefes al", "bir adım geri çekil", "düşünce durdur", "STOP yöntemi" gibi
+doküman dışı teknik veya öneri YAZMA. Sadece dokümanın tam kopyası.
+
 1. [EN KRİTİK ALT BOYUT ADI] ([puan]) ✅ [Katılımcı bunu seçtiyse işaretle]
-• [Ne Yapması Gerek dokümanından 2-3 madde - AYNEN KOPYALA]
+• [Ne Yapması Gerek dokümanından 2-3 madde - AYNEN KOPYALA, tek kelime değiştirme]
 → Neden öncelik? [Bu alan diğerlerini nasıl tetikliyor - somut açıkla]
 
 2. [İKİNCİ ALT BOYUT] ([puan])
-• [Dokümanından 2-3 madde]
+• [Dokümanından 2-3 madde - AYNEN KOPYALA]
 → Neden ikinci? [Birincisi gelişince bu neden kolaylaşacak]
 
 3. [ÜÇÜNCÜ ALT BOYUT] ([puan])
-• [Dokümanından 2-3 madde]
+• [Dokümanından 2-3 madde - AYNEN KOPYALA]
 → Neden üçüncü? [Sıranın mantığını açıkla]
 
 GELİŞİM YOL HARİTAN:
