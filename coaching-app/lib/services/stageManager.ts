@@ -249,8 +249,7 @@ function evaluateStage4Transition(
     };
   }
 
-  // Only transition when the AI explicitly asked for 2-area selection
-  // AND the user named at least 2 development areas in response
+  // YOL 1: AI "2 alan seç" dedi VE kullanıcı 2 alan adı söyledi
   const aiAskedFor2Areas =
     /2\s*tane/i.test(lastAIResponse) ||
     /iki\s*(alan|konu|tanesini)/i.test(lastAIResponse) ||
@@ -258,7 +257,6 @@ function evaluateStage4Transition(
     /2\s*(alan|konu)\s*(se[cç]|belirle)/i.test(lastAIResponse);
 
   if (aiAskedFor2Areas) {
-    // Count distinct development areas the user mentioned
     const mentionedAreaCount = DEVELOPMENT_AREA_MENTIONS.filter(pattern =>
       pattern.test(lastUserMessage)
     ).length;
@@ -268,6 +266,24 @@ function evaluateStage4Transition(
         shouldTransition: true,
         nextStage: 5,
         reason: 'AI asked for 2 areas AND user named at least 2 development areas'
+      };
+    }
+  }
+
+  // YOL 2: AI "Hazır mısın?" sorusunu sordu VE kullanıcı "evet/tamam/olur" dedi
+  // Bu, 2 alan seçimi SONRAKI adımda gerçekleşir — kullanıcı seçimini onayladı
+  const aiAskedReady =
+    /hazır\s*m[ıi]s[ıi]n/i.test(lastAIResponse) ||
+    /eylem\s*plan[ıi]\s*oluşturalım/i.test(lastAIResponse) ||
+    /başlamak\s*ister\s*misin/i.test(lastAIResponse);
+
+  if (aiAskedReady) {
+    const userConfirmed = matchesAnyPattern(lastUserMessage, CONFIRMATION_PATTERNS);
+    if (userConfirmed) {
+      return {
+        shouldTransition: true,
+        nextStage: 5,
+        reason: 'AI asked ready-to-proceed AND user confirmed'
       };
     }
   }

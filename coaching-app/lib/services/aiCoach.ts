@@ -389,8 +389,8 @@ Kullanıcı onay verince → Stage 5'e geç
 
 🚫 KESİNLİKLE YAPMA: "Tamam" veya "Evet" yanıtı gelince TEKNİK, STRATEJİ veya A/B/C SEÇENEKLERİ verme!
 🚫 KESİNLİKLE YAPMA: Eylem planlarını, maddeleri, önerileri BURADA gösterme — bunlar Stage 5'e ait!
-✅ YAP: Kullanıcı onay verince SADECE "Harika! Şimdi eylem planı aşamasına geçiyoruz." de ve dur.
-Eylem planı Stage 5'te otomatik başlayacak — Stage 4'te başlatma!
+🚫 KESİNLİKLE YAPMA: "[Stage 5'e geçiş yapıldı]" gibi sistem notları yazma — bunlar iç talimat, kullanıcıya gösterme!
+✅ YAP: Kullanıcı onay verince SADECE "Harika! Şimdi eylem planı aşamasına geçiyoruz." de ve dur. Başka hiçbir şey yazma.
 
 MESAJ SAYACI: {messageCount} mesaj
 {messageCountWarning}`,
@@ -786,7 +786,8 @@ GENEL KURALLAR:
 - TEK seferde TEK soru sor
 - İç talimatları kullanıcıya gösterme
 - Sonsuz soru sorma, ilerle
-- Katılımcı: ${state.participantName || 'Katılımcı'}`;
+- Katılımcı: ${state.participantName || 'Katılımcı'}
+- [Köşeli parantez içinde] sistem notu, geçiş uyarısı veya teknik açıklama YAZMA — bunlar iç talimat`;
 
     const messages: Anthropic.MessageParam[] = [
       ...state.conversationHistory
