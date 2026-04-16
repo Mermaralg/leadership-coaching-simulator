@@ -309,13 +309,14 @@ function evaluateStage5Transition(
     return { shouldTransition: false };
   }
 
-  // Need at least 6 exchanges — iki alan için yeterli konuşma
-  if (messageCount < 6) {
+  // İki alan için minimum 8 mesaj gerekli:
+  // 6 mesaj birinci alan + 2 mesaj ikinci alan minimum
+  if (messageCount < 8) {
     return { shouldTransition: false };
   }
 
-  // Force transition after 12 exchanges
-  if (messageCount >= 12) {
+  // Force transition after 14 exchanges
+  if (messageCount >= 14) {
     return {
       shouldTransition: true,
       nextStage: 6,
@@ -324,13 +325,14 @@ function evaluateStage5Transition(
   }
 
   // Kullanıcı somut zaman taahhüdü verdi mi?
+  // 8+ mesaj sonrası — ikinci alanın da ele alınmış olması beklenir
   const userCommitted = matchesAnyPattern(lastUserMessage, COMMITMENT_PATTERNS);
 
-  if (userCommitted && messageCount >= 6) {
+  if (userCommitted && messageCount >= 8) {
     return {
       shouldTransition: true,
       nextStage: 6,
-      reason: 'User committed to specific timing'
+      reason: 'User committed to specific timing (both areas covered)'
     };
   }
 

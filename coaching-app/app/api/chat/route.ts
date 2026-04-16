@@ -102,32 +102,37 @@ if (state.stage === 4 && updatedState.stage === 5) {
     updatedState.stage = 4;
   }
 }
-// Stage 5→6 geçiş guard: İkinci gelişim alanı konuşulmadan geçişe izin verme
+// Stage 5→6 geçiş guard: İkinci gelişim alanı koçlanmadan geçişe izin verme
 if (state.stage === 5 && updatedState.stage === 6) {
   const developmentAreas = state.developmentAreas || [];
   const secondArea = developmentAreas[1];
+  const messageCount = (state.conversationHistory || []).filter(m => m.role === 'user').length;
 
-  if (secondArea) {
-    // Son 6 mesajda ikinci alanın adı geçiyor mu kontrol et
+  if (secondArea && messageCount < 8) {
+    // 8 mesajdan önce kesinlikle geçme — ikinci alan için yeterli konuşma olmamıştır
+    console.log(`⚠️ Stage 6'ya geçiş engellendi — yeterli mesaj yok (${messageCount}/8)`);
+    updatedState.stage = 5;
+  } else if (secondArea) {
+    // Son 10 mesajda ikinci alanın adı geçiyor mu kontrol et
     const recentMessages = (state.conversationHistory || [])
-      .slice(-6)
+      .slice(-10)
       .map(m => m.content.toLowerCase())
       .join(' ');
 
     const areaKeywords: Record<string, RegExp[]> = {
-      duygu_kontrolu: [/duygu\s*kontrol/i, /duygular/i],
+      duygu_kontrolu: [/duygu\s*kontrol/i, /duyguyu/i, /kaygı/i],
       stresle_basa_cikma: [/stres/i],
-      ozguven: [/özgüven/i, /ozguven/i, /kendine\s*güven/i],
+      ozguven: [/özgüven/i, /ozguven/i, /kendine\s*güven/i, /karars/i],
       risk_duyarlilik: [/risk/i],
-      kontrolculuk: [/kontrolc/i, /planlama/i],
+      kontrolculuk: [/kontrolc/i, /planlama/i, /zaman\s*yönet/i, /organize/i],
       kural_uyumu: [/kural/i, /detay/i],
-      one_cikmayi_seven: [/öne\s*çık/i],
+      one_cikmayi_seven: [/öne\s*çık/i, /görünür/i],
       sosyallik: [/sosyal/i],
-      basari_yonelimi: [/başarı/i, /motivasyon/i],
+      basari_yonelimi: [/başarı/i, /motivasyon/i, /hedef/i, /inisiyatif/i],
       iliski_yonetimi: [/ilişki\s*yönet/i],
-      iyi_gecinme: [/iyi\s*geçin/i, /uyum/i],
-      kacinma: [/kaçınma/i, /yüzleş/i, /kaçın/i],
-      yenilikcilik: [/yenilik/i],
+      iyi_gecinme: [/iyi\s*geçin/i, /müzakere/i, /uzlaşma/i],
+      kacinma: [/kaçınma/i, /yüzleş/i, /çatışma/i, /net\s*ifade/i],
+      yenilikcilik: [/yenilik/i, /yaratıcı/i],
       ogrenme_yonelimi: [/öğrenme/i],
       merak: [/merak/i],
     };
