@@ -588,10 +588,25 @@ UYARI 3 — DOKÜMAN DIŞI ÖNERİ VERME:
 "Stres yönetimi teknikleri öğren", "olumsuz düşünce kalıplarını değiştir" gibi
 framework dışı öneriler VERME. Sadece Ne Yapması Gerek dokümanındaki maddeler.
 
-UYARI 4 — ANA BOYUT vs ALT BOYUT:
-Profil listesinde ALT BOYUTLARI yaz, ana boyutları değil.
-"Dikkat ve Düzen (9)" değil → "Kontrolcülük (2)", "Kural Uyumu (14)" yaz.
-"Duygusal Denge (19)" değil → "Duygu Kontrolü (20)", "Özgüven (17)" yaz.
+UYARI 4 — ANA BOYUT vs ALT BOYUT — ÇOK KRİTİK:
+📊 SENİN PROFİLİN bölümünde SADECE ALT BOYUTLARI listele. Ana boyutları ASLA yazma.
+
+🚫 YAZMA (Ana boyutlar):
+- Dikkat ve Düzen: 9
+- Duygusal Denge: 19
+- Dışadönüklük: 49
+- Dengeli İlişki: 79
+- Deneyime Açıklık: 69
+
+✅ YAZ (Alt boyutlar):
+- Kontrolcülük: 2
+- Kural Uyumu: 14
+- Duygu Kontrolü: 17
+- Özgüven: 20
+- Stresle Başa Çıkma: 61
+
+Puanlara bak: {allScores} içindeki ALT BOYUT satırlarını kullan.
+Ana boyut puanları (Dikkat ve Düzen: 9 gibi) sadece iç hesaplama için, kullanıcıya gösterme.
 
 "{participantName}, harika bir yolculuktu! 🌟
 
@@ -886,12 +901,20 @@ GENEL KURALLAR:
         'duygu kontrolü': 'duygu_kontrolu',
         'duygu kontrol': 'duygu_kontrolu',
         'duyguyu kontrol': 'duygu_kontrolu',
+        'duyguyu yönet': 'duygu_kontrolu',
+        'duygu yönet': 'duygu_kontrolu',
+        'duyguyu manage': 'duygu_kontrolu',
+        'duygularımı yönet': 'duygu_kontrolu',
+        'duygularını yönet': 'duygu_kontrolu',
+        'duyguyu': 'duygu_kontrolu',
+        'duygularım': 'duygu_kontrolu',
         'duygular': 'duygu_kontrolu',
         'duygu yönetim': 'duygu_kontrolu',
+        'olumsuz duygu': 'duygu_kontrolu',
+        'duyguyu yönetmek': 'duygu_kontrolu',
         // Stresle Başa Çıkma
         'stresle başa çıkma': 'stresle_basa_cikma',
         'stres': 'stresle_basa_cikma',
-        'kaygı': 'duygu_kontrolu',
         'kaygıyı': 'duygu_kontrolu',
         // Özgüven
         'özgüven': 'ozguven',
@@ -951,14 +974,18 @@ GENEL KURALLAR:
         'araştırma': 'merak',
       };
 
-      const selectedAreas: string[] = [];
+      const selectedAreasSet = new Set<string>();
       const lowerMessage = userMessage.toLowerCase();
-      
-      Object.entries(dimensionKeyMap).forEach(([name, key]) => {
+
+      // Uzun eşleşmeleri önce kontrol et (kısa kelime yanlış eşleşmesin)
+      const sortedEntries = Object.entries(dimensionKeyMap).sort((a, b) => b[0].length - a[0].length);
+      sortedEntries.forEach(([name, key]) => {
         if (lowerMessage.includes(name)) {
-          selectedAreas.push(key);
+          selectedAreasSet.add(key);
         }
       });
+
+      const selectedAreas = Array.from(selectedAreasSet);
 
       if (selectedAreas.length >= 1) {
         newState.developmentAreas = selectedAreas;
